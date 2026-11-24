@@ -46,8 +46,15 @@ export function acceptMessage(from: string, p: Pick): string {
 export const laterMessage = (from: string) =>
   `Anh ${from} ơi, dạo này em hơi bận, để hôm khác mình đi nhé. Khi nào rảnh em báo anh 😊`;
 
-/** Link mở Zalo tới số của anh; rỗng nếu chưa cấu hình. */
+/**
+ * Link mở Zalo tới số của anh; rỗng nếu chưa cấu hình.
+ * Dạng chuẩn là zalo.me/84xxxxxxxxx: bỏ số 0 đầu, thêm mã nước 84.
+ * Trên điện thoại link này mở thẳng app Zalo; trên máy tính Zalo hiện trang có mã QR.
+ */
 export function zaloLink(phone: string): string {
-  const digits = phone.replace(/\D/g, "");
-  return digits ? `https://zalo.me/${digits}` : "";
+  let digits = phone.replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.startsWith("0")) digits = "84" + digits.slice(1);
+  else if (!digits.startsWith("84")) digits = "84" + digits;
+  return `https://zalo.me/${digits}`;
 }

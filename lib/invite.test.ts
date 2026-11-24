@@ -41,6 +41,7 @@ describe("tin nhắn", () => {
 });
 
 describe("zaloLink", () => {
-  it("lọc ký tự không phải số", () => expect(zaloLink("091 234-5678")).toBe("https://zalo.me/0912345678"));
+  it("bỏ số 0 đầu, thêm 84 và lọc ký tự lạ", () => expect(zaloLink("091 234-5678")).toBe("https://zalo.me/84912345678"));
+  it("giữ nguyên số đã có 84 hoặc +84", () => expect(zaloLink("+84 912 345 678")).toBe("https://zalo.me/84912345678"));
   it("rỗng khi chưa cấu hình", () => expect(zaloLink("")).toBe(""));
 });
