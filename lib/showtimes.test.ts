@@ -3,8 +3,12 @@ import { ADS_MINUTES, ARRIVE_BEFORE_SHOW, AVAILABILITY, CINEMAS, DEFAULT_MOVIE_M
 import {
   bookableMovies,
   cgvDate,
+  listLotteCinemas,
+  matchCinemaList,
   matchCinemas,
   mergeShowtimes,
+  movieKey,
+  parseLotteSchedule,
   normalize,
   parseCinemaSchedule,
   parseClock,
@@ -69,21 +73,26 @@ const times = (d: ShowtimesData, date: string, now = new Date(2026, 10, 25, 9, 0
 describe("parsing CGV", () => {
   it("normalize bỏ dấu và chữ đ", () => expect(normalize("CGV Vincom Bắc Từ Liêm - Đống Đa")).toBe("cgv vincom bac tu liem dong da"));
   it("cgvDate dạng DDMMYYYY", () => expect(cgvDate(new Date(2026, 10, 5))).toBe("05112026"));
+  it("movieKey: cùng phim ở các chuỗi rạp ra cùng một khoá", () => {
+    expect(movieKey("Bò Sữa Bay (T13)")).toBe("bo sua bay");
+    expect(movieKey("BÒ SỮA BAY [Lồng tiếng]")).toBe("bo sua bay");
+  });
   it("parseClock đọc được nhiều định dạng", () => {
     expect(parseClock("19:30")).toBe("19:30");
+    expect(parseClock("1930")).toBe("19:30");
     expect(parseClock("", "2026-11-28 9:05:00")).toBe("09:05");
     expect(parseClock("abc", null)).toBeNull();
   });
   it("matchCinemas tìm rạp theo từ khoá không dấu, báo rạp không thấy", () => {
     const r = matchCinemas(CINEMA_LIST, CINEMAS);
     expect(r.found.map((c) => `${c.key}:${c.id}`)).toEqual(["btl:021", "iph:014"]);
-    expect(r.missing).toEqual(["xd"]);
+    expect(r.missing).toEqual(["kosmo", "lwl", "xd"]);
     expect(r.all).toContain("CGV Vincom Bà Triệu");
   });
   it("parseCinemaSchedule lấy phim, thời lượng và suất còn bán", () => {
     const r = parseCinemaSchedule(schedule([{ time: "19:30" }, { time: "21:00", is_booking: false }]), "btl", "2026-11-28");
-    expect(r.movies).toEqual([{ sku: "26001", name: "Bò Sữa Bay", rating: "T13", duration: 110 }]);
-    expect(r.shows).toEqual([{ date: "2026-11-28", time: "19:30", cinema: "btl", sku: "26001", format: "2D Phụ Đề" }]);
+    expect(r.movies).toEqual([{ sku: "bo sua bay", name: "Bò Sữa Bay", rating: "T13", duration: 110 }]);
+    expect(r.shows).toEqual([{ date: "2026-11-28", time: "19:30", cinema: "btl", sku: "bo sua bay", format: "2D Phụ Đề" }]);
   });
   it("bỏ thời lượng vô lý, chịu được dữ liệu thiếu", () => {
     const r = parseCinemaSchedule(schedule([{ time: "19:30" }], { sku: "x", name: "Phim X", movie_endtime: 1732800000 }), "btl", "2026-11-28");
@@ -96,6 +105,53 @@ describe("parsing CGV", () => {
     const m = mergeShowtimes([a, a]);
     expect(m.movies).toHaveLength(1);
     expect(m.shows.map((s) => s.time)).toEqual(["19:30", "21:00"]);
+  });
+});
+
+// Shape follows Lotte's TicketingData.aspx responses (lists nested under varying keys).
+const LOTTE_CINEMAS = {
+  Cinemas: {
+    Cinemas: {
+      Items: [
+        { DivisionCode: 1, DetailDivisionCode: "0001", CinemaID: 5001, CinemaNameKR: "Lotte Cinema Kosmo Tây Hồ", CinemaAddrSummary: "101 Xuân La, Bắc Từ Liêm, Hà Nội" },
+        { DivisionCode: 1, DetailDivisionCode: "0001", CinemaID: 5002, CinemaNameKR: "Lotte Cinema West Lake", CinemaAddrSummary: "683 Lạc Long Quân, Tây Hồ, Hà Nội" },
+        { DivisionCode: 1, DetailDivisionCode: "0002", CinemaID: 6001, CinemaNameKR: "Lotte Cinema Nam Sài Gòn", CinemaAddrSummary: "469 Nguyễn Hữu Thọ, TP.HCM" },
+      ],
+    },
+  },
+};
+const LOTTE_PLAYS = {
+  PlaySeqs: {
+    Items: [
+      { MovieNameKR: "Bò Sữa Bay", StartTime: "1930", PlayTime: 110, PlayDt: "2026-11-28", ViewGradeNameKR: "T13", FilmNameKR: "2D", TranslationDivisionNameKR: "Phụ đề" },
+      { MovieNameKR: "Bò Sữa Bay", StartTime: "21:00", PlayTime: 110, PlayDt: "2026-11-28", IsBookingYN: "N" },
+      { MovieNameKR: "Phim Khác", StartTime: "20:00", PlayDt: "2026-11-29" },
+    ],
+  },
+};
+
+describe("Lotte", () => {
+  it("listLotteCinemas tạo id dạng Division|Detail|CinemaID và tìm được rạp", () => {
+    const list = listLotteCinemas(LOTTE_CINEMAS);
+    expect(list.map((c) => c.id)).toEqual(["1|0001|5001", "1|0001|5002", "1|0002|6001"]);
+    const r = matchCinemaList(list, CINEMAS.filter((c) => c.chain === "lotte"));
+    expect(r.found.map((c) => `${c.key}:${c.id}`)).toEqual(["kosmo:1|0001|5001", "lwl:1|0001|5002"]);
+  });
+  it("parseLotteSchedule: giờ HHMM, bỏ suất hết vé và ngày khác", () => {
+    const r = parseLotteSchedule(LOTTE_PLAYS, "kosmo", "2026-11-28");
+    expect(r.shows).toEqual([{ date: "2026-11-28", time: "19:30", cinema: "kosmo", sku: "bo sua bay", format: "2D Phụ đề" }]);
+    expect(r.movies[0]).toEqual({ sku: "bo sua bay", name: "Bò Sữa Bay", rating: "T13", duration: 110 });
+  });
+  it("chịu được dữ liệu lạ", () => {
+    expect(parseLotteSchedule({ IsOK: "false", ResultMessage: "x" }, "kosmo", "2026-11-28")).toEqual({ movies: [], shows: [] });
+    expect(listLotteCinemas(null)).toEqual([]);
+  });
+  it("gộp với CGV: cùng một phim, giữ tên CGV", () => {
+    const cgv = parseCinemaSchedule(schedule([{ time: "19:00" }], { sku: "26001", name: "Bò Sữa Bay", movie_endtime: 110 }), "btl", "2026-11-28");
+    const lotte = parseLotteSchedule({ Items: [{ MovieNameKR: "BÒ SỮA BAY (T13)", StartTime: "1930", PlayDt: "2026-11-28" }] }, "kosmo", "2026-11-28");
+    const m = mergeShowtimes([cgv, lotte]);
+    expect(m.movies).toEqual([{ sku: "bo sua bay", name: "Bò Sữa Bay", rating: "T13", duration: 110 }]);
+    expect(m.shows.map((x) => `${x.time}@${x.cinema}`)).toEqual(["19:00@btl", "19:30@kosmo"]);
   });
 });
 

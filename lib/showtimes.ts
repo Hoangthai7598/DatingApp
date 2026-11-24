@@ -18,6 +18,7 @@ export interface ShowCinema {
 }
 
 export interface ShowMovie {
+  /** Movie id shared across chains: the normalized title (see movieKey). */
   sku: string;
   name: string;
   /** Age rating code, e.g. "T13". */
@@ -41,7 +42,8 @@ export interface Show {
 export interface ShowtimesData {
   /** ISO timestamp of the last successful fetch, or null if it failed. */
   fetchedAt: string | null;
-  source: "CGV";
+  /** Chains the data came from, e.g. "CGV, Lotte". */
+  source: string;
   error?: string;
   cinemas: ShowCinema[];
   movies: ShowMovie[];
@@ -81,6 +83,22 @@ type Json = Record<string, unknown>;
 const arr = (v: unknown): Json[] => (Array.isArray(v) ? (v as Json[]) : []);
 const str = (v: unknown): string => (typeof v === "string" ? v : typeof v === "number" ? String(v) : "");
 
+/**
+ * Movie id shared across chains, so the same film at CGV and Lotte appears once:
+ * the title without bracketed tags like "(T16)" or "[Lồng tiếng]", normalized.
+ */
+export const movieKey = (name: string) => normalize(name.replace(/\(.*?\)|\[.*?\]/g, " "));
+
+/** A cinema as listed by a chain, before matching it to the config. */
+export interface ListedCinema {
+  /** The chain's id, used in schedule requests. */
+  id: string;
+  name: string;
+  address?: string;
+  /** Normalized city/area text used to prefer Hà Nội. */
+  city: string;
+}
+
 export interface MatchedCinema {
   key: string;
   label: string;
@@ -89,21 +107,51 @@ export interface MatchedCinema {
   address?: string;
 }
 
-/**
- * Find the configured cinemas in CGV's cinema list (`GET /api/cinema/list`).
- * Prefers cinemas in a city group whose name contains "ha noi". Returns matches and the keys not found.
- */
-export function matchCinemas(listResponse: unknown, configs: CinemaConfig[]): { found: MatchedCinema[]; missing: string[]; all: string[] } {
-  const groups = arr((listResponse as Json)?.data);
-  const flat = groups.flatMap((g) =>
+/** CGV `GET /api/cinema/list`: { data: [{ name: city, cinemas: [{ id, name, address }] }] } */
+export function listCgvCinemas(resp: unknown): ListedCinema[] {
+  return arr((resp as Json)?.data).flatMap((g) =>
     arr(g.cinemas).map((c) => ({
-      city: normalize(str(g.name)),
       id: str(c.id),
-      name: str(c.name),
-      address: str(c.address) || undefined,
+      name: str(c.name).trim(),
+      address: str(c.address).trim() || undefined,
+      city: normalize(str(g.name)),
     })),
   );
-  const hanoiFirst = [...flat].sort((a, b) => Number(b.city.includes("ha noi")) - Number(a.city.includes("ha noi")));
+}
+
+/** All arrays of objects anywhere in `v` whose items have `key` (Lotte nests its lists differently per method). */
+export function findItems(v: unknown, key: string, depth = 0): Json[] {
+  if (depth > 6 || v === null || typeof v !== "object") return [];
+  if (Array.isArray(v)) {
+    const objs = v.filter((x): x is Json => x !== null && typeof x === "object" && !Array.isArray(x));
+    if (objs.length && objs.some((o) => key in o)) return objs.filter((o) => key in o);
+    return v.flatMap((x) => findItems(x, key, depth + 1));
+  }
+  return Object.values(v as Json).flatMap((x) => findItems(x, key, depth + 1));
+}
+
+/**
+ * Lotte `GetTicketingPageTOBE`: cinema items with CinemaID, DivisionCode, DetailDivisionCode, CinemaName*.
+ * The schedule request needs the id as "DivisionCode|DetailDivisionCode|CinemaID".
+ */
+export function listLotteCinemas(resp: unknown): ListedCinema[] {
+  const seen = new Set<string>();
+  return findItems(resp, "CinemaID").flatMap((c) => {
+    const cid = str(c.CinemaID);
+    const name = str(c.CinemaNameVN || c.CinemaName || c.CinemaNameKR || c.CinemaNameUS).trim();
+    if (!cid || !name) return [];
+    const id = [str(c.DivisionCode) || "1", str(c.DetailDivisionCode) || "0001", cid].join("|");
+    if (seen.has(id)) return [];
+    seen.add(id);
+    const address = str(c.CinemaAddrSummary || c.Address || c.CinemaAddress).trim() || undefined;
+    return [{ id, name, address, city: normalize(`${str(c.CityName || c.DetailDivisionNameKR || c.DetailDivisionName)} ${address ?? ""}`) }];
+  });
+}
+
+/** Match configured cinemas (by `match` keywords) against a chain's list, preferring Hà Nội. */
+export function matchCinemaList(list: ListedCinema[], configs: CinemaConfig[]): { found: MatchedCinema[]; missing: string[]; all: string[] } {
+  const isHanoi = (c: ListedCinema) => c.city.includes("ha noi") || normalize(`${c.name} ${c.address ?? ""}`).includes("ha noi");
+  const hanoiFirst = [...list].sort((a, b) => Number(isHanoi(b)) - Number(isHanoi(a)));
   const found: MatchedCinema[] = [];
   const missing: string[] = [];
   for (const cfg of configs) {
@@ -114,13 +162,17 @@ export function matchCinemas(listResponse: unknown, configs: CinemaConfig[]): { 
     if (hit) found.push({ key: cfg.key, label: cfg.label, id: hit.id, name: hit.name, address: hit.address });
     else missing.push(cfg.key);
   }
-  return { found, missing, all: flat.filter((c) => c.city.includes("ha noi")).map((c) => c.name) };
+  return { found, missing, all: list.filter(isHanoi).map((c) => c.name) };
 }
 
-/** First HH:MM found in the given strings, zero-padded. */
+/** CGV only (kept for the CGV path). */
+export const matchCinemas = (resp: unknown, configs: CinemaConfig[]) => matchCinemaList(listCgvCinemas(resp), configs);
+
+/** First HH:MM (or bare HHMM, as Lotte sends) found in the given strings, zero-padded. */
 export function parseClock(...candidates: unknown[]): string | null {
   for (const c of candidates) {
-    const m = str(c).match(/(\d{1,2}):(\d{2})/);
+    const v = str(c).trim();
+    const m = v.match(/(\d{1,2}):(\d{2})/) ?? v.match(/^(\d{2})(\d{2})$/);
     if (m) {
       const h = Number(m[1]);
       const min = Number(m[2]);
@@ -129,6 +181,18 @@ export function parseClock(...candidates: unknown[]): string | null {
   }
   return null;
 }
+
+const runtimeOf = (v: unknown) => {
+  const n = Number(v);
+  return Number.isFinite(n) && n >= 40 && n <= 300 ? n : undefined;
+};
+const ratingOf = (...vs: unknown[]) => {
+  for (const v of vs) {
+    const m = str(v).toUpperCase().match(/\b(P|K|T13|T16|T18|C13|C16|C18)\b/);
+    if (m) return m[1];
+  }
+  return undefined;
+};
 
 /**
  * Parse one cinema's schedule for one day
@@ -143,15 +207,14 @@ export function parseCinemaSchedule(
   const shows: Show[] = [];
   for (const day of arr((resp as Json)?.data)) {
     for (const m of arr(day.movies)) {
-      const sku = str(m.sku) || str(m.id);
       const name = str(m.name).trim();
-      if (!sku || !name) continue;
-      const runtime = Number(m.movie_endtime);
+      const sku = movieKey(name);
+      if (!sku) continue;
       movies.push({
         sku,
         name,
         rating: str(m.rating_code) || undefined,
-        duration: Number.isFinite(runtime) && runtime >= 40 && runtime <= 300 ? runtime : undefined,
+        duration: runtimeOf(m.movie_endtime),
       });
       for (const lang of arr(m.languages)) {
         const format = str(lang.name).trim() || undefined;
@@ -166,6 +229,36 @@ export function parseCinemaSchedule(
   return { movies, shows };
 }
 
+/**
+ * Parse one Lotte cinema's schedule for one day (`GetPlaySequence`).
+ * Items carry MovieName*, StartTime ("19:30" or "1930"), PlayTime (runtime), PlayDt, FilmName*, TranslationDivisionName*.
+ */
+export function parseLotteSchedule(resp: unknown, cinemaKey: string, date: string): { movies: ShowMovie[]; shows: Show[] } {
+  const movies: ShowMovie[] = [];
+  const shows: Show[] = [];
+  for (const it of findItems(resp, "StartTime")) {
+    const name = str(it.MovieNameVN || it.MovieName || it.MovieNameKR || it.MovieNameUS).trim();
+    const sku = movieKey(name);
+    const time = parseClock(it.StartTime);
+    if (!sku || !time) continue;
+    const playDt = str(it.PlayDt || it.PlayDate).slice(0, 10).replace(/\//g, "-");
+    if (playDt && /^\d{4}-\d{2}-\d{2}$/.test(playDt) && playDt !== date) continue;
+    if (str(it.IsBookingYN).toUpperCase() === "N") continue;
+    movies.push({
+      sku,
+      name,
+      rating: ratingOf(it.ViewGradeNameVN, it.ViewGradeName, it.ViewGradeNameKR, it.ViewGradeCode),
+      duration: runtimeOf(it.PlayTime ?? it.RunningTime),
+    });
+    const format = [str(it.FilmNameVN || it.FilmName || it.FilmNameKR), str(it.TranslationDivisionNameVN || it.TranslationDivisionName || it.TranslationDivisionNameKR)]
+      .map((x) => x.trim())
+      .filter(Boolean)
+      .join(" ");
+    shows.push({ date, time, cinema: cinemaKey, sku, ...(format ? { format } : {}) });
+  }
+  return { movies, shows };
+}
+
 /** Merge per-cinema/per-day results: unique movies (by sku) and unique, sorted shows. */
 export function mergeShowtimes(parts: { movies: ShowMovie[]; shows: Show[] }[]): { movies: ShowMovie[]; shows: Show[] } {
   const movies = new Map<string, ShowMovie>();
@@ -173,7 +266,13 @@ export function mergeShowtimes(parts: { movies: ShowMovie[]; shows: Show[] }[]):
   for (const p of parts) {
     for (const m of p.movies) {
       const prev = movies.get(m.sku);
-      movies.set(m.sku, { ...prev, ...m, duration: m.duration ?? prev?.duration, rating: m.rating ?? prev?.rating });
+      // Keep the first title seen (CGV is fetched first, in Vietnamese); fill gaps from other chains.
+      movies.set(m.sku, {
+        sku: m.sku,
+        name: prev?.name ?? m.name,
+        rating: prev?.rating ?? m.rating,
+        duration: prev?.duration ?? m.duration,
+      });
     }
     for (const s of p.shows) shows.set(`${s.date}|${s.time}|${s.cinema}|${s.sku}|${s.format ?? ""}`, s);
   }

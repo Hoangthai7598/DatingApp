@@ -72,6 +72,8 @@ jobs:
           # Settings → Secrets and variables → Actions → Variables (public by design)
           NEXT_PUBLIC_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          # Cloudflare Worker proxy for live showtimes (worker/README.md). Optional.
+          NEXT_PUBLIC_SHOWTIMES_PROXY: ${{ vars.SHOWTIMES_PROXY_URL }}
       - uses: actions/upload-pages-artifact@v5
         with:
           path: out

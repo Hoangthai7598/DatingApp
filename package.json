@@ -10,7 +10,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build",
-    "showtimes": "tsx scripts/fetch-showtimes.ts"
+    "showtimes": "tsx scripts/fetch-showtimes.ts",
+    "showtimes:install-mac": "bash scripts/mac/install.sh",
+    "showtimes:push": "bash scripts/mac/refresh-showtimes.sh"
   },
   "dependencies": {
     "@fontsource/be-vietnam-pro": "^5.3.0",

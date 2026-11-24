@@ -1,0 +1,10 @@
+# Cloudflare Worker: showtimes proxy for the invitation page. Deploy: see worker/README.md
+name = "moi-thuy-showtimes"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+
+[vars]
+# Sites allowed to call this proxy from a browser (comma-separated, no trailing slash).
+ALLOWED_ORIGINS = "https://hoangthai7598.github.io,http://localhost:3000"
+# How long a schedule is cached before asking the cinema again.
+CACHE_SECONDS = "1800"

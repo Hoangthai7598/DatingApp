@@ -116,23 +116,48 @@ export const DEFAULT_DURATION = 90;
 
 /* ====== LỊCH CHIẾU PHIM (CGV) ====== */
 
+export type CinemaChain = "cgv" | "lotte";
+
 export interface CinemaConfig {
   /** Mã ngắn dùng trong dữ liệu, vd "btl". */
   key: string;
+  /** Chuỗi rạp, quyết định lấy lịch từ đâu. */
+  chain: CinemaChain;
   /** Tên hiển thị trên trang. */
   label: string;
-  /** Từ khoá để tìm rạp trong danh sách của CGV (không dấu, chữ thường; khớp một từ là được). */
+  /** Từ khoá để tìm rạp trong danh sách của chuỗi (không dấu, chữ thường; khớp một từ là được). */
   match: string[];
   /** Thời gian đi từ chỗ em tới rạp, phút. */
   travelFromHer: number;
 }
 
-/** Các rạp CGV gần Xuân Đỉnh. Script lấy lịch tìm rạp theo `match`; rạp nào không tìm thấy sẽ được báo trong log. */
+/**
+ * Các rạp gần Xuân Đỉnh. Script lấy lịch tìm rạp theo `match`;
+ * rạp nào không tìm thấy sẽ được báo trong log kèm danh sách tên rạp ở Hà Nội để sửa từ khoá.
+ */
 export const CINEMAS: CinemaConfig[] = [
-  { key: "btl", label: "CGV Vincom Bắc Từ Liêm", match: ["bac tu liem", "pham van dong"], travelFromHer: 10 },
-  { key: "iph", label: "CGV IPH Xuân Thủy", match: ["iph", "indochina"], travelFromHer: 15 },
-  { key: "xd", label: "CGV Xuân Diệu", match: ["xuan dieu"], travelFromHer: 20 },
+  { key: "kosmo", chain: "lotte", label: "Lotte Kosmo Tây Hồ", match: ["kosmo", "xuan la"], travelFromHer: 5 },
+  { key: "btl", chain: "cgv", label: "CGV Vincom Bắc Từ Liêm", match: ["bac tu liem", "pham van dong"], travelFromHer: 10 },
+  { key: "lwl", chain: "lotte", label: "Lotte Tây Hồ", match: ["west lake", "lac long quan", "lotte tay ho"], travelFromHer: 15 },
+  { key: "iph", chain: "cgv", label: "CGV IPH Xuân Thủy", match: ["iph", "indochina"], travelFromHer: 15 },
+  { key: "xd", chain: "cgv", label: "CGV Xuân Diệu", match: ["xuan dieu"], travelFromHer: 20 },
 ];
+
+/** Dữ liệu cũ của một chuỗi được dùng lại (khi lần lấy mới bị lỗi) nếu chưa quá chừng này giờ. */
+export const SHOWTIMES_MAX_AGE_HOURS = 72;
+
+/**
+ * Khi em bấm "Xem phim", trang lấy lịch mới nhất từ CGV/Lotte (qua SHOWTIMES_PROXY).
+ * Lỗi gì thì trang dùng public/showtimes.json như bình thường. Đặt false để tắt.
+ */
+export const LIVE_SHOWTIMES = true;
+
+/**
+ * Proxy lịch chiếu (Cloudflare Worker trong thư mục worker/), vd "https://moi-thuy-showtimes.<tên>.workers.dev".
+ * Đặt qua biến repo SHOWTIMES_PROXY_URL trên GitHub (hoặc NEXT_PUBLIC_SHOWTIMES_PROXY khi chạy local).
+ * Để trống thì trang gọi thẳng rạp và sẽ bị CORS chặn.
+ */
+export const SHOWTIMES_PROXY = process.env.NEXT_PUBLIC_SHOWTIMES_PROXY ?? "";
 
 /** Lấy lịch chiếu bao nhiêu ngày tới (tính cả hôm nay). */
 export const SHOWTIME_DAYS = 7;

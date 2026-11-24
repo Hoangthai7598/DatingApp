@@ -212,6 +212,43 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visib
 .fb-sent b { color: var(--pop); font-size: 17px; }
 .fb-sent span { color: #fbe9ee; font-size: 15px; }
 .fb-out pre { white-space: pre-wrap; background: var(--deep); border-radius: 12px; padding: 12px; margin: 0 0 10px; font: inherit; font-size: 15px; }
+/* ── Bắp the popcorn mascot ── */
+.mascot { display: block; overflow: visible; }
+.top .hello { margin: 0 auto 8px; }
+.out.saved { grid-template-columns: auto 1fr; column-gap: 12px; align-items: center; }
+.out.saved .saved-mascot { grid-row: span 4; }
+.sheet-backdrop {
+  position: fixed; inset: 0; z-index: 50; display: grid; place-items: end center;
+  background: rgba(20, 3, 9, .6); padding: 16px max(12px, env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+}
+.sheet {
+  width: min(440px, 100%); background: var(--paper); color: var(--ink); border-radius: 22px;
+  padding: 22px 20px 18px; text-align: center; box-shadow: 0 -10px 40px rgba(0, 0, 0, .35);
+}
+.sheet .mascot { margin: -64px auto 6px; filter: drop-shadow(0 6px 0 rgba(0, 0, 0, .15)); }
+.sheet h2 { margin: 0 0 4px; font-size: 22px; }
+.sheet p { margin: 0 0 16px; color: var(--soft); min-height: 1.5em; }
+.sheet-actions { display: grid; gap: 8px; }
+.sheet-later { background: transparent; color: var(--soft); text-decoration: underline; }
+@media (min-width: 601px) { .sheet-backdrop { place-items: center; } }
+@media (prefers-reduced-motion: no-preference) {
+  .top .hello { animation: bob 2.6s ease-in-out infinite; transform-origin: 50% 100%; }
+  @keyframes bob { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-4px) rotate(2deg); } }
+  .sheet-backdrop { animation: fade .2s ease-out; }
+  .sheet { animation: rise-sheet .28s cubic-bezier(.2, .9, .3, 1.2); }
+  @keyframes fade { from { opacity: 0; } }
+  @keyframes rise-sheet { from { transform: translateY(40px); opacity: 0; } }
+  .mascot.shake { animation: sob .5s ease-in-out infinite; transform-origin: 50% 90%; }
+  @keyframes sob { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-2.5deg) translateY(1px); } 75% { transform: rotate(2.5deg) translateY(1px); } }
+  .mascot .tear { animation: tear 1.1s ease-in infinite; transform-box: fill-box; transform-origin: 50% 0; }
+  .mascot .tear-r { animation-delay: .45s; }
+  @keyframes tear { 0% { transform: translateY(-2px) scale(.6); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(18px) scale(1); opacity: 0; } }
+  .mascot .mascot-wobble { animation: wobble .35s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 50%; }
+  @keyframes wobble { to { transform: scaleX(.85) translateY(.5px); } }
+  .mascot-pop circle { transform-box: fill-box; transform-origin: 50% 100%; }
+  .mascot-happy .mascot-pop circle:nth-child(odd) { animation: pop 2.2s ease-in-out infinite; }
+  @keyframes pop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+}
 .foot { max-width: 560px; margin: 18px auto 0; text-align: center; color: var(--rose); font-size: 13px; }
 @media (prefers-reduced-motion: no-preference) {
   .ticket { animation: rise .5s ease-out; }

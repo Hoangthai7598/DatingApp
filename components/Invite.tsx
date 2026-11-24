@@ -9,6 +9,9 @@ import {
   CINEMAS,
   DEFAULT_DURATION,
   DEFAULT_MOVIE_MINUTES,
+  LIVE_SHOWTIMES,
+  SHOWTIMES_PROXY,
+  SHOWTIME_DAYS,
   LEAD_MINUTES,
   MIN_DAYS,
   STEP_MINUTES,
@@ -40,8 +43,11 @@ import {
   type ShowRules,
   type ShowtimesData,
 } from "@/lib/showtimes";
+import { combineShowtimes, fetchLiveShowtimes } from "@/lib/live-showtimes";
 import { sendBooking, userAgent } from "@/lib/store";
 import Feedback from "./Feedback";
+import LaterSheet from "./LaterSheet";
+import Mascot from "./Mascot";
 import { ActivityIcon } from "./icons";
 
 type Kind = "accept" | "later";
@@ -82,6 +88,10 @@ export default function Invite() {
   const [stubVisible, setStubVisible] = useState(false);
   const [showtimes, setShowtimes] = useState<ShowtimesData | null>(null);
   const [movieSku, setMovieSku] = useState<string | null>(null);
+  const [askLater, setAskLater] = useState(false);
+  /** Thử nghiệm gọi thẳng rạp từ trình duyệt (LIVE_SHOWTIMES). */
+  const [live, setLive] = useState<"idle" | "loading" | "live" | "blocked">("idle");
+  const liveRef = useRef(false);
   const otherRef = useRef<HTMLInputElement>(null);
   const outRef = useRef<HTMLDivElement>(null);
   const stubRef = useRef<HTMLElement>(null);
@@ -100,8 +110,12 @@ export default function Invite() {
     const ctrl = new AbortController();
     fetch(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/showtimes.json`, { signal: ctrl.signal, cache: "no-cache" })
       .then((r) => (r.ok ? (r.json() as Promise<ShowtimesData>) : emptyShowtimes(`HTTP ${r.status}`)))
-      .then((d) => setShowtimes(Array.isArray(d?.shows) && Array.isArray(d?.movies) ? d : emptyShowtimes("bad data")))
-      .catch(() => !ctrl.signal.aborted && setShowtimes(emptyShowtimes("offline")));
+      .then((d) => {
+        const file = Array.isArray(d?.shows) && Array.isArray(d?.movies) ? d : emptyShowtimes("bad data");
+        // If live data already arrived, only use the file for cinemas live didn't cover.
+        setShowtimes((prev) => (liveRef.current && prev ? combineShowtimes(prev, file) : file));
+      })
+      .catch(() => !ctrl.signal.aborted && setShowtimes((prev) => prev ?? emptyShowtimes("offline")));
     return () => ctrl.abort();
   }, []);
 
@@ -121,8 +135,30 @@ export default function Invite() {
       ? groupByWeek(showDates(showtimes, movie.sku, now, SHOW_RULES).map(parseIsoDate), now)
       : groupByWeek(calendarDays(now, AVAILABILITY, rule, MIN_DAYS, STEP_MINUTES, LEAD_MINUTES, TRAVEL_MINUTES), now);
 
+  /** Lần đầu em chọn "Xem phim": thử hỏi thẳng rạp. Bị chặn thì giữ dữ liệu file, không làm gì thêm. */
+  const tryLive = () => {
+    if (!LIVE_SHOWTIMES || live !== "idle") return;
+    setLive("loading");
+    fetchLiveShowtimes({ cinemas: CINEMAS, days: SHOWTIME_DAYS, proxy: SHOWTIMES_PROXY })
+      .then(({ data, log }) => {
+        console.info("[showtimes] live fetch:", log.join(" | "));
+        if (data) {
+          liveRef.current = true;
+          setShowtimes((prev) => combineShowtimes(data, prev));
+          setLive("live");
+        } else {
+          setLive("blocked");
+        }
+      })
+      .catch((e) => {
+        console.info("[showtimes] live fetch failed:", e);
+        setLive("blocked");
+      });
+  };
+
   /** Đổi hoạt động: giữ các lựa chọn còn hợp, bỏ các lựa chọn không còn hợp và báo cho em. */
   const chooseActivity = (id: ActivityId) => {
+    if (id === "phim") tryLive();
     const next = ACTIVITIES.find((a) => a.id === id)!;
     if (pick?.show && id !== "phim") {
       setPick(null);
@@ -285,8 +321,8 @@ export default function Invite() {
         {activity === "phim" && (
           <div className="movies">
             <h3>Em muốn xem phim gì?</h3>
-            {!showtimes ? (
-              <p className="note">Đang tải lịch chiếu…</p>
+            {!showtimes || (live === "loading" && movies.length === 0) ? (
+              <p className="note">Đang hỏi rạp lịch chiếu mới nhất…</p>
             ) : movies.length === 0 ? (
               <p className="note">
                 Hôm nay anh chưa lấy được lịch chiếu. Em cứ chọn ngày và giờ đón ở bước 2, anh đặt vé suất hợp nhất nhé.
@@ -311,9 +347,12 @@ export default function Invite() {
                     </button>
                   </li>
                 </ul>
-                {showtimes.fetchedAt && (
+                {live === "loading" && <p className="fetched">Đang hỏi rạp lịch mới nhất…</p>}
+                {showtimes.fetchedAt && live !== "loading" && (
                   <p className="fetched">
-                    Lịch chiếu CGV gần chỗ em, cập nhật lúc {fmtFetched(showtimes.fetchedAt)}. Chỉ hiện phim có suất anh đón và đưa em về kịp.
+                    {live === "live" ? "Vừa lấy trực tiếp từ rạp. " : ""}
+                    Lịch chiếu {showtimes.source ? showtimes.source.replace("LOTTE", "Lotte") : "các rạp"} gần chỗ em, cập nhật lúc{" "}
+                    {fmtFetched(showtimes.fetchedAt)}. Chỉ hiện phim có suất anh đón và đưa em về kịp.
                   </p>
                 )}
               </>
@@ -503,6 +542,7 @@ export default function Invite() {
 
         {result?.status === "saved" && (
           <div className="out saved" ref={outRef} role="status">
+            <Mascot mood={result.kind === "accept" ? "happy" : "sad"} size={72} className="saved-mascot" />
             {result.kind === "accept" ? (
               <>
                 <b>Anh nhận được vé rồi 🎟️</b>
@@ -532,7 +572,7 @@ export default function Invite() {
           type="button"
           className="btn later"
           disabled={Boolean(sending)}
-          onClick={() => submit("later")}
+          onClick={() => setAskLater(true)}
         >
           Dạo này em bận, để hôm khác nhé
         </button>
@@ -545,6 +585,15 @@ export default function Invite() {
         </button>
       </div>
     </main>
+    {askLater && (
+      <LaterSheet
+        onCancel={() => setAskLater(false)}
+        onConfirm={() => {
+          setAskLater(false);
+          void submit("later");
+        }}
+      />
+    )}
     <Feedback activity={movieName ? `${what} · ${movieName}` : what} pickedSlot={slotLabel} />
     </>
   );

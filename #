@@ -1,0 +1,2446 @@
+{
+  "fetchedAt": "2026-11-24T23:15:51.238Z",
+  "source": "CGV",
+  "error": "lotte: no showtimes",
+  "cinemas": [
+    {
+      "key": "btl",
+      "label": "CGV Vincom Bắc Từ Liêm",
+      "name": "CGV Vincom Bắc Từ Liêm",
+      "address": "Tòa nhà 21B5, 234 Phạm Văn Đồng, Bắc Từ Liêm, Cổ Nhuế, Từ Liêm, Hà Nội"
+    },
+    {
+      "key": "iph",
+      "label": "CGV IPH Xuân Thủy",
+      "name": "CGV Indochina Plaza Hà Nội",
+      "address": "Tầng 4, Indochina Plaza Hà Nội, 241 Xuân Thủy, Q. Cầu Giấy, Hà Nội"
+    },
+    {
+      "key": "xd",
+      "label": "CGV Xuân Diệu",
+      "name": "CGV Xuân Diệu",
+      "address": "Tầng 2, Tòa nhà D’. Le Roi Soleil, số 59 Xuân Diệu, P. Quảng An, Q. Tây Hồ, Hà Nội"
+    }
+  ],
+  "movies": [
+    {
+      "sku": "dune hanh tinh cat phan hai",
+      "name": "DUNE: HÀNH TINH CÁT - PHẦN HAI (CHIẾU LẠI)",
+      "rating": "T16",
+      "duration": 177
+    },
+    {
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "name": "ĐẤU TRƯỜNG SINH TỬ: BÌNH MINH NGÀY CHIÊU QUÂN",
+      "rating": "T16",
+      "duration": 158
+    },
+    {
+      "sku": "ebenezer phep mau dem giang sinh",
+      "name": "EBENEZER PHÉP MÀU ĐÊM GIÁNG SINH",
+      "rating": "T13",
+      "duration": 116
+    },
+    {
+      "sku": "gap go thong gia dau moi trinh lang",
+      "name": "GẶP GỠ THÔNG GIA: DÂU MỚI TRÌNH LÀNG",
+      "rating": "T13",
+      "duration": 106
+    },
+    {
+      "sku": "godzilla tru khong",
+      "name": "GODZILLA TRỪ KHÔNG",
+      "rating": "T16",
+      "duration": 135
+    },
+    {
+      "sku": "hexe the gioi phep thuat",
+      "name": "HEXE: THẾ GIỚI PHÉP THUẬT",
+      "rating": "P",
+      "duration": 110
+    },
+    {
+      "sku": "kien le phieu luu ke",
+      "name": "KIẾN LÉ PHIÊU LƯU KÉ",
+      "rating": "P",
+      "duration": 77
+    },
+    {
+      "sku": "ma mut con vuot ky bang ha",
+      "name": "MA MÚT CON VƯỢT KỶ BĂNG HÀ",
+      "rating": "P",
+      "duration": 73
+    },
+    {
+      "sku": "ngay con con me",
+      "name": "NGÀY CON CÒN MẸ",
+      "rating": "T16",
+      "duration": 113
+    },
+    {
+      "sku": "ramayana khoi nguon mot huyen thoai",
+      "name": "RAMAYANA: KHỞI NGUỒN MỘT HUYỀN THOẠI",
+      "rating": "T13",
+      "duration": 168
+    },
+    {
+      "sku": "running man viet nam 2026 ve nha",
+      "name": "RUNNING MAN VIỆT NAM 2026 - VỀ NHÀ",
+      "rating": "P",
+      "duration": 181
+    },
+    {
+      "sku": "trai giam hanh phuc",
+      "name": "TRẠI GIAM HẠNH PHÚC",
+      "rating": "T16",
+      "duration": 127
+    }
+  ],
+  "shows": [
+    {
+      "date": "2026-11-25",
+      "time": "09:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "09:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "09:50",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "10:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "10:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "10:10",
+      "cinema": "iph",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "10:10",
+      "cinema": "xd",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "10:15",
+      "cinema": "xd",
+      "sku": "kien le phieu luu ke",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "10:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "10:40",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "10:50",
+      "cinema": "iph",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "11:00",
+      "cinema": "iph",
+      "sku": "godzilla tru khong",
+      "format": "2D Phụ Đề Anh & Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "11:10",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "11:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "11:20",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "11:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "11:30",
+      "cinema": "xd",
+      "sku": "ma mut con vuot ky bang ha",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "11:40",
+      "cinema": "xd",
+      "sku": "ramayana khoi nguon mot huyen thoai",
+      "format": "2D Phụ Đề Việt Lồng tiếng Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "11:50",
+      "cinema": "iph",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "11:50",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "12:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "12:00",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "12:15",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "12:30",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "12:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "12:30",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "12:40",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "13:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "13:10",
+      "cinema": "btl",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "13:10",
+      "cinema": "iph",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "13:10",
+      "cinema": "xd",
+      "sku": "ma mut con vuot ky bang ha",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "13:15",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "13:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "13:20",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "13:50",
+      "cinema": "iph",
+      "sku": "godzilla tru khong",
+      "format": "2D Phụ Đề Anh & Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "14:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "14:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "14:00",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "14:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "14:20",
+      "cinema": "iph",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "14:20",
+      "cinema": "xd",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "14:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "14:40",
+      "cinema": "btl",
+      "sku": "kien le phieu luu ke",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "14:40",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "14:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "14:50",
+      "cinema": "xd",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "15:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "15:00",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "15:00",
+      "cinema": "xd",
+      "sku": "ramayana khoi nguon mot huyen thoai",
+      "format": "2D Phụ Đề Việt Lồng tiếng Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "15:05",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "15:10",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "15:30",
+      "cinema": "btl",
+      "sku": "godzilla tru khong",
+      "format": "2D Phụ Đề Anh & Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "15:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "15:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "15:50",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "16:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "16:00",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "16:10",
+      "cinema": "iph",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "16:20",
+      "cinema": "btl",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "16:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "16:40",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "16:40",
+      "cinema": "iph",
+      "sku": "dune hanh tinh cat phan hai",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "16:40",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "16:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "16:50",
+      "cinema": "xd",
+      "sku": "godzilla tru khong",
+      "format": "2D Phụ Đề Anh & Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "17:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "17:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "17:10",
+      "cinema": "xd",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "17:15",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "17:20",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "17:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "17:40",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "17:50",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "18:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "18:10",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "18:15",
+      "cinema": "btl",
+      "sku": "ma mut con vuot ky bang ha",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "18:20",
+      "cinema": "iph",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "18:20",
+      "cinema": "xd",
+      "sku": "ramayana khoi nguon mot huyen thoai",
+      "format": "2D Phụ Đề Việt Lồng tiếng Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "18:40",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "18:40",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "19:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "19:00",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "19:10",
+      "cinema": "iph",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "19:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "19:20",
+      "cinema": "iph",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "19:20",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "19:30",
+      "cinema": "btl",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "19:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "19:30",
+      "cinema": "xd",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "19:40",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "19:40",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "19:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "20:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "20:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "20:00",
+      "cinema": "xd",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "20:10",
+      "cinema": "iph",
+      "sku": "ma mut con vuot ky bang ha",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "20:15",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "20:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "20:30",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "20:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "20:50",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "21:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "21:20",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "21:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "21:40",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "21:45",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "21:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "21:50",
+      "cinema": "iph",
+      "sku": "dune hanh tinh cat phan hai",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "21:50",
+      "cinema": "xd",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "22:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "22:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "22:00",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "22:10",
+      "cinema": "iph",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "22:10",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "22:15",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "22:15",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "22:20",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "22:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "22:30",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "22:35",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "22:50",
+      "cinema": "btl",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "23:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "23:00",
+      "cinema": "xd",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-25",
+      "time": "23:15",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "09:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "09:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "09:50",
+      "cinema": "iph",
+      "sku": "godzilla tru khong",
+      "format": "2D Phụ Đề Anh & Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "09:50",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "10:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "10:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "10:10",
+      "cinema": "iph",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "10:10",
+      "cinema": "xd",
+      "sku": "kien le phieu luu ke",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "10:25",
+      "cinema": "xd",
+      "sku": "ma mut con vuot ky bang ha",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "10:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "10:40",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "10:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "11:10",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "11:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "11:20",
+      "cinema": "iph",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "11:20",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "11:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "11:40",
+      "cinema": "xd",
+      "sku": "ramayana khoi nguon mot huyen thoai",
+      "format": "2D Phụ Đề Việt Lồng tiếng Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "11:50",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "12:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "12:00",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "12:10",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "12:15",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "12:30",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "12:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "12:30",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "12:40",
+      "cinema": "iph",
+      "sku": "dune hanh tinh cat phan hai",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "12:40",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "13:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "13:10",
+      "cinema": "btl",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "13:15",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "13:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "13:20",
+      "cinema": "iph",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "13:20",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "13:40",
+      "cinema": "iph",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "14:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "14:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "14:00",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "14:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "14:20",
+      "cinema": "xd",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "14:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "14:30",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "14:40",
+      "cinema": "btl",
+      "sku": "kien le phieu luu ke",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "14:40",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "14:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "14:50",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "15:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "15:00",
+      "cinema": "xd",
+      "sku": "ramayana khoi nguon mot huyen thoai",
+      "format": "2D Phụ Đề Việt Lồng tiếng Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "15:05",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "15:10",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "15:30",
+      "cinema": "btl",
+      "sku": "godzilla tru khong",
+      "format": "2D Phụ Đề Anh & Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "15:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "15:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "15:50",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "16:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "16:00",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "16:10",
+      "cinema": "iph",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "16:15",
+      "cinema": "iph",
+      "sku": "godzilla tru khong",
+      "format": "2D Phụ Đề Anh & Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "16:20",
+      "cinema": "btl",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "16:20",
+      "cinema": "iph",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "16:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "16:40",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "16:40",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "16:50",
+      "cinema": "xd",
+      "sku": "godzilla tru khong",
+      "format": "2D Phụ Đề Anh & Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "17:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "17:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "17:15",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "17:20",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "17:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "17:30",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "17:40",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "17:40",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "17:50",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "18:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "18:15",
+      "cinema": "btl",
+      "sku": "ma mut con vuot ky bang ha",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "18:15",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "18:20",
+      "cinema": "xd",
+      "sku": "ramayana khoi nguon mot huyen thoai",
+      "format": "2D Phụ Đề Việt Lồng tiếng Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "18:30",
+      "cinema": "iph",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "18:40",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "18:40",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "19:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "19:00",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "19:10",
+      "cinema": "iph",
+      "sku": "godzilla tru khong",
+      "format": "2D Phụ Đề Anh & Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "19:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "19:20",
+      "cinema": "iph",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "19:20",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "19:30",
+      "cinema": "btl",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "19:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "19:40",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "19:40",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "19:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "20:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "20:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "20:00",
+      "cinema": "xd",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "20:10",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "20:15",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "20:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "20:30",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "20:45",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "20:50",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "21:00",
+      "cinema": "iph",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "21:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "21:20",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "21:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "21:40",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "21:45",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "21:50",
+      "cinema": "iph",
+      "sku": "dune hanh tinh cat phan hai",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:00",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:10",
+      "cinema": "xd",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:15",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:15",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:20",
+      "cinema": "iph",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:20",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:30",
+      "cinema": "xd",
+      "sku": "ebenezer phep mau dem giang sinh",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:35",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:50",
+      "cinema": "btl",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "22:50",
+      "cinema": "xd",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "23:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "23:15",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-26",
+      "time": "23:20",
+      "cinema": "iph",
+      "sku": "ngay con con me",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "09:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "10:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "11:00",
+      "cinema": "xd",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "11:10",
+      "cinema": "iph",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "11:15",
+      "cinema": "btl",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "11:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "11:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "11:40",
+      "cinema": "btl",
+      "sku": "dau truong sinh tu binh minh ngay chieu quan",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "12:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "12:30",
+      "cinema": "btl",
+      "sku": "hexe the gioi phep thuat",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "12:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "14:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "14:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "14:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "14:30",
+      "cinema": "xd",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "14:40",
+      "cinema": "iph",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "14:45",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "14:45",
+      "cinema": "btl",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "15:00",
+      "cinema": "btl",
+      "sku": "gap go thong gia dau moi trinh lang",
+      "format": "2D Phụ Đề Việt"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "15:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "16:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "16:40",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "17:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "17:15",
+      "cinema": "btl",
+      "sku": "hexe the gioi phep thuat",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "17:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "17:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "18:00",
+      "cinema": "xd",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "18:10",
+      "cinema": "iph",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "18:15",
+      "cinema": "btl",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "19:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "19:20",
+      "cinema": "btl",
+      "sku": "hexe the gioi phep thuat",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "19:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "20:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "20:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "21:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "21:30",
+      "cinema": "xd",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "21:40",
+      "cinema": "btl",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "21:40",
+      "cinema": "iph",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "21:50",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "22:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "22:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-27",
+      "time": "22:35",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "09:30",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "09:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "09:40",
+      "cinema": "btl",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "09:50",
+      "cinema": "btl",
+      "sku": "ma mut con vuot ky bang ha",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "10:30",
+      "cinema": "btl",
+      "sku": "hexe the gioi phep thuat",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "11:00",
+      "cinema": "xd",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "11:10",
+      "cinema": "iph",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "12:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "12:10",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "12:50",
+      "cinema": "btl",
+      "sku": "hexe the gioi phep thuat",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "13:10",
+      "cinema": "btl",
+      "sku": "kien le phieu luu ke",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "14:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "14:30",
+      "cinema": "xd",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "14:40",
+      "cinema": "iph",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "14:45",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "14:50",
+      "cinema": "btl",
+      "sku": "ma mut con vuot ky bang ha",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:10",
+      "cinema": "btl",
+      "sku": "hexe the gioi phep thuat",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "16:30",
+      "cinema": "btl",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "17:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "17:20",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "17:30",
+      "cinema": "btl",
+      "sku": "hexe the gioi phep thuat",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "18:00",
+      "cinema": "xd",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "18:10",
+      "cinema": "iph",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "19:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "19:50",
+      "cinema": "btl",
+      "sku": "hexe the gioi phep thuat",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "20:00",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "20:00",
+      "cinema": "btl",
+      "sku": "ma mut con vuot ky bang ha",
+      "format": "2D Lồng Tiếng Việt"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "21:30",
+      "cinema": "xd",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "21:40",
+      "cinema": "iph",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "22:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "22:15",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "22:35",
+      "cinema": "btl",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "09:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "11:00",
+      "cinema": "xd",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "11:10",
+      "cinema": "iph",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "12:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "14:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "14:30",
+      "cinema": "xd",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "14:40",
+      "cinema": "iph",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "17:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "18:00",
+      "cinema": "xd",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "18:10",
+      "cinema": "iph",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "19:30",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "21:30",
+      "cinema": "xd",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "21:40",
+      "cinema": "iph",
+      "sku": "running man viet nam 2026 ve nha",
+      "format": "2D"
+    },
+    {
+      "date": "2026-11-29",
+      "time": "22:00",
+      "cinema": "iph",
+      "sku": "trai giam hanh phuc",
+      "format": "2D Phụ Đề Anh"
+    }
+  ]
+}

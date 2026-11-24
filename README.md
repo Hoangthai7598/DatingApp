@@ -1,6 +1,6 @@
 # DatingApp — "Đi chơi không em?" 🎟️
 
-A small, mobile-first invitation page styled as a cinema ticket. The recipient picks an activity, then chooses one day + pick-up time from a week-by-week calendar list (from now until the end of the year) that only offers times that make sense for that activity, and taps **Chốt vé**. For movies she picks a film and a real CGV showtime near her place (fetched every morning); the pick-up time is worked out for her. The booking is saved straight to a database and you get a Telegram notification; she doesn't need to message you. There's also a polite "maybe another time" option and a private feedback box. If the network is flaky the page retries automatically, then offers a "Gửi lại" (send again) button with her choices kept.
+A small, mobile-first invitation page styled as a cinema ticket. The recipient picks an activity, then chooses one day + pick-up time from a week-by-week calendar list (from now until the end of the year) that only offers times that make sense for that activity, and taps **Chốt vé**. For movies she picks a film and a real CGV or Lotte showtime near her place (fetched every morning); the pick-up time is worked out for her. The booking is saved straight to a database and you get a Telegram notification; she doesn't need to message you. There's also a polite "maybe another time" option and a private feedback box. If the network is flaky the page retries automatically, then offers a "Gửi lại" (send again) button with her choices kept.
 
 The UI copy is in Vietnamese; everything for developers is in English.
 
@@ -26,7 +26,8 @@ npm run dev      # http://localhost:3000
 | `npm test` | Unit tests (Vitest) |
 | `npm run build` | Static export to `out/` |
 | `npm run check` | Lint + typecheck + test + build, exactly what CI runs |
-| `npm run showtimes` | Fetch CGV showtimes into `public/showtimes.json` (CI does this before each deploy) |
+| `npm run showtimes` | Fetch CGV + Lotte showtimes into `public/showtimes.json` (CI does this before each deploy) |
+| `npm run showtimes -- --probe` | Print what each chain's endpoints return (for fixing the fetcher) |
 
 ## Project structure
 
@@ -43,12 +44,13 @@ lib/
   config.ts           # ← Edit this: available times, activities, sender name
   store.ts            # Saves bookings/feedback to Supabase (REST, no SDK)
   store.test.ts
-  showtimes.ts        # Parses CGV schedules; picks showtimes that fit your availability
+  showtimes.ts        # Parses CGV/Lotte schedules, merges films across chains, picks showtimes that fit
   showtimes.test.ts
 scripts/
-  fetch-showtimes.ts  # Fetches CGV showtimes → public/showtimes.json
+  fetch-showtimes.ts  # Fetches CGV + Lotte showtimes → public/showtimes.json
   invite.ts           # Pure logic: upcoming days, labels, message text
   invite.test.ts      # Unit tests for lib/invite.ts
+worker/               # Cloudflare Worker: CORS proxy for live showtimes (own README)
 supabase/
   schema.sql          # Tables, insert-only access, Telegram trigger. Run once in Supabase.
   migrations/         # Changes for a database created with an older schema.sql
@@ -86,22 +88,56 @@ Days with no valid time for the chosen activity are hidden. If she switches acti
 
 ## Movie showtimes
 
-When she picks **Xem phim**, the page lists the films showing at the CGV cinemas near her (`CINEMAS` in `lib/config.ts`) over the next `SHOWTIME_DAYS` days, then only the showtimes you can actually make:
+When she picks **Xem phim**, the page lists the films showing at the cinemas near her (`CINEMAS` in `lib/config.ts`: CGV Vincom Bắc Từ Liêm, CGV IPH, CGV Xuân Diệu, Lotte Kosmo Tây Hồ, Lotte Tây Hồ) over the next `SHOWTIME_DAYS` days, then only the showtimes you can actually make:
 
 - pick-up = showtime − travel from her place to that cinema (`travelFromHer`) − `ARRIVE_BEFORE_SHOW`, rounded down to 5 minutes;
 - that pick-up must fit your `AVAILABILITY` (free time + your travel, `latestPickup`);
 - showtime + `ADS_MINUTES` + runtime + travel back must get her home by `dropOffBy`, and by `homeBy` − your travel on meeting nights;
 - today: pick-up at least `LEAD_MINUTES` from now.
 
-She can also choose **Phim nào cũng được**, which falls back to choosing a pick-up time.
+The same film at CGV and Lotte is shown once (matched by title, ignoring tags like "(T13)"). She can also choose **Phim nào cũng được**, which falls back to choosing a pick-up time.
 
-**Where the data comes from.** `scripts/fetch-showtimes.ts` calls CGV's public mobile endpoints (`/api/cinema/list` and `/cinemas/catalog_mobile/siteschedules/id/{id}/date/{DDMMYYYY}`), about 20 small requests, and writes `public/showtimes.json`. CI runs it before every deploy, and the workflow also runs **every day at 05:17 Vietnam time** to refresh it. These endpoints are undocumented and can change at any time; this is a personal page, so keep the request volume low.
+### Where the data comes from
 
-**If it breaks** the build still succeeds: the script writes an empty file with an `error`, the Actions run shows a "Showtimes" warning, and the page tells her to pick a pick-up time instead. If the warning says a cinema wasn't found, it also lists CGV's Hà Nội cinema names: adjust `match` in `CINEMAS`.
+`scripts/fetch-showtimes.ts` calls each chain's public endpoints (undocumented, used by their own websites/apps) and writes `public/showtimes.json`:
 
-Notes:
+| Chain | Endpoints |
+|---|---|
+| CGV | `GET cgv.vn/default/api/cinema/list`, `GET …/cinemas/catalog_mobile/siteschedules/id/{id}/date/{DDMMYYYY}` (Vietnamese titles; falls back to `/en`) |
+| Lotte | `POST lottecinemavn.com/LCWS/Ticketing/TicketingData.aspx` with form field `paramList` = JSON: `GetTicketingPageTOBE` (cinemas), `GetPlaySequence` (schedule) |
+
+CI runs it before every deploy, and the workflow also runs **every day at 05:17 Vietnam time**. That's about 35 small requests a day; keep it that way.
+
+### Live showtimes in the browser (Cloudflare Worker)
+
+When she taps **Xem phim**, the page also asks the cinemas for the latest schedule (`lib/live-showtimes.ts`). Browsers block reading CGV/Lotte directly (no CORS headers), so the page goes through a tiny Cloudflare Worker proxy in `worker/` that only allows those showtime endpoints, only from this site, and caches for 30 minutes. Deploy it once (free) and set the repo variable `SHOWTIMES_PROXY_URL`: see [`worker/README.md`](worker/README.md). If the proxy isn't set up or fails, the page silently uses `public/showtimes.json`. Turn the whole thing off with `LIVE_SHOWTIMES = false` in `lib/config.ts`.
+
+### When a chain fails
+
+The build never fails because of showtimes:
+
+- If one chain fails (e.g. it blocks GitHub's servers), its showtimes from the **committed** `public/showtimes.json` are kept, as long as that file is less than `SHOWTIMES_MAX_AGE_HOURS` old.
+- If everything fails, the committed file is used as is, or the page tells her to pick a pick-up time instead.
+- Each problem shows up as a "Showtimes" warning in the Actions run.
+
+In practice CGV and Lotte block GitHub's servers, so **your Mac refreshes the file every morning** and pushes it (which redeploys):
+
+```bash
+npm run showtimes:install-mac       # once: launchd job at 06:07 daily (runs on wake if the Mac was asleep)
+npm run showtimes:push              # refresh + commit + push right now, by hand
+npm run showtimes:install-mac -- --uninstall
+```
+
+`scripts/mac/refresh-showtimes.sh` pulls `main`, runs `npm run showtimes -- --strict`, and commits/pushes `public/showtimes.json` only if it changed. It skips when you have other uncommitted changes or aren't on `main`, and never commits a failed fetch. Log: `~/Library/Logs/moi-thuy-showtimes.log`.
+
+The repo must not live in Desktop, Documents or Downloads: macOS blocks background jobs from reading those folders, and the installer refuses to install from there. Pushing uses your normal git credentials (Keychain).
+
+### Fixing the fetcher
+
+- "cinemas not found" warning: it lists the chain's Hà Nội cinema names; adjust `match` in `CINEMAS`.
+- Anything else: run `npm run showtimes -- --probe`, which prints the structure of each endpoint's response, and adjust the parsers in `lib/showtimes.ts` (`listCgvCinemas`, `parseCinemaSchedule`, `listLotteCinemas`, `parseLotteSchedule`).
+- Optional env vars: `CGV_BASE_URL` (comma-separated bases), `LOTTE_URL`, `LOTTE_LANG` (default `LL`), `SHOWTIMES_USER_AGENT`.
 - GitHub pauses scheduled workflows after 60 days without commits; re-enable it in the *Actions* tab.
-- Local testing: `npm run showtimes && npm run dev`. The file is git-ignored.
 
 ## Database: receiving bookings and feedback
 
