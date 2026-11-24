@@ -33,6 +33,11 @@ export interface BookingRow {
   slot_label?: string | null;
   note?: string | null;
   user_agent?: string | null;
+  /** Movie bookings only. */
+  movie?: string | null;
+  cinema?: string | null;
+  /** Showtime, HH:MM */
+  showtime?: string | null;
 }
 
 interface StoreOptions {
@@ -83,6 +88,9 @@ export function toBookingRow(input: BookingRow): BookingRow {
     slot_label: cap(input.slot_label, 80),
     note: cap(input.note, MAX_NOTE_LENGTH),
     user_agent: cap(input.user_agent, 300),
+    movie: cap(input.movie, 120),
+    cinema: cap(input.cinema, 80),
+    showtime: input.showtime && /^\d{2}:\d{2}$/.test(input.showtime) ? input.showtime : null,
   };
 }
 
@@ -138,10 +146,14 @@ export async function sendFeedback(input: FeedbackRow, opts: StoreOptions = {}):
   await insert("feedback", row, opts);
 }
 
+/** Drop null fields so the request only names columns it actually sets (works before a migration adds new ones). */
+export const withoutNulls = <T extends object>(row: T): Partial<T> =>
+  Object.fromEntries(Object.entries(row).filter(([, v]) => v !== null && v !== undefined)) as Partial<T>;
+
 export async function sendBooking(input: BookingRow, opts: StoreOptions = {}): Promise<void> {
   const row = toBookingRow(input);
   if (row.kind === "accept" && !(row.activity && row.day && row.pickup_time)) throw new Error("Incomplete booking");
-  await insert("bookings", row, opts);
+  await insert("bookings", withoutNulls(row), opts);
 }
 
 export const userAgent = () => (typeof navigator === "undefined" ? null : navigator.userAgent);

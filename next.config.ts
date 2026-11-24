@@ -6,6 +6,8 @@ const basePath = process.env.PAGES_BASE_PATH ?? "";
 const nextConfig: NextConfig = {
   output: "export",
   basePath,
+  // The page fetches /showtimes.json and needs to know the base path at runtime.
+  env: { NEXT_PUBLIC_BASE_PATH: basePath },
   trailingSlash: true,
   images: { unoptimized: true },
 };

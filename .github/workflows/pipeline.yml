@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    # Every day 05:17 Vietnam time (22:17 UTC): refresh movie showtimes and redeploy.
+    - cron: "17 22 * * *"
 
 permissions:
   contents: read
@@ -56,6 +59,11 @@ jobs:
       - id: pages
         uses: actions/configure-pages@v6
       - run: npm ci
+      - name: Fetch movie showtimes (CGV)
+        # Never fails the build: on errors it writes an empty file and the page falls back to pick-up times.
+        run: npm run showtimes
+        env:
+          TZ: Asia/Ho_Chi_Minh
       - name: Build static site
         run: npm run build
         env:

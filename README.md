@@ -1,6 +1,6 @@
 # DatingApp — "Đi chơi không em?" 🎟️
 
-A small, mobile-first invitation page styled as a cinema ticket. The recipient picks an activity, then chooses one day + pick-up time from a week-by-week calendar list (from now until the end of the year) that only offers times that make sense for that activity, and taps **Chốt vé**. The booking is saved straight to a database and you get a Telegram notification; she doesn't need to message you. There's also a polite "maybe another time" option and a private feedback box. If the network is flaky the page retries automatically, then offers a "Gửi lại" (send again) button with her choices kept.
+A small, mobile-first invitation page styled as a cinema ticket. The recipient picks an activity, then chooses one day + pick-up time from a week-by-week calendar list (from now until the end of the year) that only offers times that make sense for that activity, and taps **Chốt vé**. For movies she picks a film and a real CGV showtime near her place (fetched every morning); the pick-up time is worked out for her. The booking is saved straight to a database and you get a Telegram notification; she doesn't need to message you. There's also a polite "maybe another time" option and a private feedback box. If the network is flaky the page retries automatically, then offers a "Gửi lại" (send again) button with her choices kept.
 
 The UI copy is in Vietnamese; everything for developers is in English.
 
@@ -26,6 +26,7 @@ npm run dev      # http://localhost:3000
 | `npm test` | Unit tests (Vitest) |
 | `npm run build` | Static export to `out/` |
 | `npm run check` | Lint + typecheck + test + build, exactly what CI runs |
+| `npm run showtimes` | Fetch CGV showtimes into `public/showtimes.json` (CI does this before each deploy) |
 
 ## Project structure
 
@@ -42,10 +43,15 @@ lib/
   config.ts           # ← Edit this: available times, activities, sender name
   store.ts            # Saves bookings/feedback to Supabase (REST, no SDK)
   store.test.ts
+  showtimes.ts        # Parses CGV schedules; picks showtimes that fit your availability
+  showtimes.test.ts
+scripts/
+  fetch-showtimes.ts  # Fetches CGV showtimes → public/showtimes.json
   invite.ts           # Pure logic: upcoming days, labels, message text
   invite.test.ts      # Unit tests for lib/invite.ts
 supabase/
   schema.sql          # Tables, insert-only access, Telegram trigger. Run once in Supabase.
+  migrations/         # Changes for a database created with an older schema.sql
 .github/
   workflows/pipeline.yml   # CI/CD
   dependabot.yml           # Weekly dependency updates
@@ -78,6 +84,25 @@ Days with no valid time for the chosen activity are hidden. If she switches acti
 | Heading and intro text | `app/page.tsx` |
 | Look and feel | `app/globals.css` |
 
+## Movie showtimes
+
+When she picks **Xem phim**, the page lists the films showing at the CGV cinemas near her (`CINEMAS` in `lib/config.ts`) over the next `SHOWTIME_DAYS` days, then only the showtimes you can actually make:
+
+- pick-up = showtime − travel from her place to that cinema (`travelFromHer`) − `ARRIVE_BEFORE_SHOW`, rounded down to 5 minutes;
+- that pick-up must fit your `AVAILABILITY` (free time + your travel, `latestPickup`);
+- showtime + `ADS_MINUTES` + runtime + travel back must get her home by `dropOffBy`, and by `homeBy` − your travel on meeting nights;
+- today: pick-up at least `LEAD_MINUTES` from now.
+
+She can also choose **Phim nào cũng được**, which falls back to choosing a pick-up time.
+
+**Where the data comes from.** `scripts/fetch-showtimes.ts` calls CGV's public mobile endpoints (`/api/cinema/list` and `/cinemas/catalog_mobile/siteschedules/id/{id}/date/{DDMMYYYY}`), about 20 small requests, and writes `public/showtimes.json`. CI runs it before every deploy, and the workflow also runs **every day at 05:17 Vietnam time** to refresh it. These endpoints are undocumented and can change at any time; this is a personal page, so keep the request volume low.
+
+**If it breaks** the build still succeeds: the script writes an empty file with an `error`, the Actions run shows a "Showtimes" warning, and the page tells her to pick a pick-up time instead. If the warning says a cinema wasn't found, it also lists CGV's Hà Nội cinema names: adjust `match` in `CINEMAS`.
+
+Notes:
+- GitHub pauses scheduled workflows after 60 days without commits; re-enable it in the *Actions* tab.
+- Local testing: `npm run showtimes && npm run dev`. The file is git-ignored.
+
 ## Database: receiving bookings and feedback
 
 Bookings (`bookings` table) and feedback (`feedback` table) are stored in [Supabase](https://supabase.com), free tier. The page talks to Supabase's REST API with the **publishable key**, which is meant to be public. Access is locked down in `supabase/schema.sql`:
@@ -89,6 +114,7 @@ Bookings (`bookings` table) and feedback (`feedback` table) are stored in [Supab
 
 1. **Create a project.** Sign up at supabase.com (GitHub login works) → *New project*. Pick a name, a database password (save it somewhere) and region **Southeast Asia (Singapore)**.
 2. **Create the tables.** In the project: *SQL Editor* → *New query* → paste the whole of `supabase/schema.sql` → *Run*. It should finish with "Success. No rows returned".
+   - Already set up with an older `schema.sql`? Run the files in `supabase/migrations/` instead, in order. Each is safe to re-run.
 3. **Copy the URL and key.** Click **Connect** at the top of the dashboard (or *Project Settings → API Keys*):
    - Project URL, like `https://abcdefgh.supabase.co`
    - **Publishable key**, starting with `sb_publishable_`. Never use the secret key (`sb_secret_`) here.

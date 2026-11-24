@@ -113,3 +113,35 @@ export const ACTIVITIES: Activity[] = [
 
 /** Dùng khi em chưa chọn đi đâu: cho xem lịch với thời lượng ngắn nhất. */
 export const DEFAULT_DURATION = 90;
+
+/* ====== LỊCH CHIẾU PHIM (CGV) ====== */
+
+export interface CinemaConfig {
+  /** Mã ngắn dùng trong dữ liệu, vd "btl". */
+  key: string;
+  /** Tên hiển thị trên trang. */
+  label: string;
+  /** Từ khoá để tìm rạp trong danh sách của CGV (không dấu, chữ thường; khớp một từ là được). */
+  match: string[];
+  /** Thời gian đi từ chỗ em tới rạp, phút. */
+  travelFromHer: number;
+}
+
+/** Các rạp CGV gần Xuân Đỉnh. Script lấy lịch tìm rạp theo `match`; rạp nào không tìm thấy sẽ được báo trong log. */
+export const CINEMAS: CinemaConfig[] = [
+  { key: "btl", label: "CGV Vincom Bắc Từ Liêm", match: ["bac tu liem", "pham van dong"], travelFromHer: 10 },
+  { key: "iph", label: "CGV IPH Xuân Thủy", match: ["iph", "indochina"], travelFromHer: 15 },
+  { key: "xd", label: "CGV Xuân Diệu", match: ["xuan dieu"], travelFromHer: 20 },
+];
+
+/** Lấy lịch chiếu bao nhiêu ngày tới (tính cả hôm nay). */
+export const SHOWTIME_DAYS = 7;
+
+/** Đến rạp trước giờ chiếu bao lâu (lấy vé, bắp nước), phút. */
+export const ARRIVE_BEFORE_SHOW = 15;
+
+/** Quảng cáo trước phim, phút. */
+export const ADS_MINUTES = 15;
+
+/** Thời lượng phim mặc định khi CGV không cho biết, phút. */
+export const DEFAULT_MOVIE_MINUTES = 120;

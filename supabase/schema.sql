@@ -19,6 +19,10 @@ create table if not exists public.bookings (
   slot_label  text check (slot_label is null or char_length(slot_label) <= 80),
   note        text check (note is null or char_length(note) <= 200),
   user_agent  text check (user_agent is null or char_length(user_agent) <= 300),
+  -- Movie bookings: which film, cinema and showtime she picked (pickup_time is when you collect her).
+  movie       text check (movie is null or char_length(movie) <= 120),
+  cinema      text check (cinema is null or char_length(cinema) <= 80),
+  showtime    text check (showtime is null or showtime ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$'),
   -- An accepted booking must say what, which day and what time.
   check (kind = 'later' or (activity is not null and day is not null and pickup_time is not null))
 );
@@ -45,7 +49,7 @@ create policy "anyone can send feedback" on public.feedback for insert to anon w
 
 -- No select/update/delete policies exist, so those are denied. Tighten grants too.
 revoke all on public.bookings, public.feedback from anon, authenticated;
-grant insert (kind, activity, day, pickup_time, slot_label, note, user_agent) on public.bookings to anon;
+grant insert (kind, activity, day, pickup_time, slot_label, note, user_agent, movie, cinema, showtime) on public.bookings to anon;
 grant insert (message, activity, picked_slot, user_agent) on public.feedback to anon;
 
 -- ─────────────────────────────────────────────────────────────── Telegram notification (optional)
@@ -77,7 +81,15 @@ begin
     if new.kind = 'accept' then
       msg := '🎟️ Em chốt vé rồi!' || chr(10)
           || '• Đi: ' || coalesce(new.activity, '?') || chr(10)
-          || '• Khi nào: ' || coalesce(new.slot_label, new.day::text || ' ' || new.pickup_time)
+          || coalesce('• Phim: ' || new.movie || chr(10), '')
+          || case
+               when new.movie is not null then
+                 '• Suất: ' || coalesce(new.showtime, '?') || ' ngày ' || to_char(new.day, 'DD/MM')
+                 || coalesce(' tại ' || new.cinema, '') || chr(10)
+                 || '• Đón em lúc: ' || new.pickup_time
+               else
+                 '• Khi nào: ' || coalesce(new.slot_label, new.day::text || ' ' || new.pickup_time)
+             end
           || coalesce(chr(10) || '• Em dặn: ' || new.note, '');
     else
       msg := '🕊️ Em bảo dạo này bận, để hôm khác nhé.'

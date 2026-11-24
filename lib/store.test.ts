@@ -36,6 +36,15 @@ describe("toBookingRow", () => {
     });
     expect(toBookingRow({ kind: "accept", pickup_time: "any" }).pickup_time).toBe("any");
   });
+  it("vé xem phim: giữ phim, rạp, suất; bỏ suất sai định dạng", () => {
+    expect(toBookingRow({ kind: "accept", movie: " Bò Sữa Bay ", cinema: "CGV Vincom Bắc Từ Liêm", showtime: "19:30" })).toMatchObject({
+      movie: "Bò Sữa Bay",
+      cinema: "CGV Vincom Bắc Từ Liêm",
+      showtime: "19:30",
+    });
+    expect(toBookingRow({ kind: "accept", showtime: "7pm" }).showtime).toBeNull();
+    expect(toBookingRow({ kind: "later" })).toMatchObject({ movie: null, cinema: null, showtime: null });
+  });
 });
 
 describe("sendFeedback", () => {
@@ -65,11 +74,13 @@ describe("sendBooking", () => {
     const [endpoint, init] = callOf(f);
     expect(endpoint).toBe(`${URL}/rest/v1/bookings`);
     expect(JSON.parse(init.body as string)).toMatchObject({ kind: "accept", day: "2026-11-28", note: "mang mũ" });
+    expect(Object.keys(JSON.parse(init.body as string))).not.toContain("movie");
   });
   it("để hôm khác: không cần ngày giờ", async () => {
     const f = okFetch();
     await sendBooking({ kind: "later" }, opts(f));
-    expect(JSON.parse(callOf(f)[1].body as string)).toMatchObject({ kind: "later", day: null });
+    // Only columns with values are sent, so the request works even before migration 002.
+    expect(JSON.parse(callOf(f)[1].body as string)).toEqual({ kind: "later" });
   });
   it("chốt vé thiếu thông tin thì không gửi", async () => {
     const f = okFetch();
