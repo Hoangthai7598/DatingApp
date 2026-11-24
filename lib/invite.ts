@@ -8,6 +8,14 @@ export const ANY_TIME = "any";
 
 type Windows = Record<number, [string, string] | null>;
 
+/** Điều kiện giờ đón của một hoạt động. */
+export interface SlotRule {
+  /** Từ lúc đón đến lúc đưa về, phút. */
+  duration: number;
+  /** Các khoảng giờ đón được phép (giờ mở cửa, giờ ăn…). Bỏ trống = không giới hạn thêm. */
+  pickupWindows?: [string, string][];
+}
+
 const toMin = (hhmm: string) => {
   const [h, m] = hhmm.split(":").map(Number);
   return h * 60 + m;
@@ -30,23 +38,43 @@ export const dayKey = (d: Date) =>
 const sameDay = (a: Date, b: Date) => dayKey(a) === dayKey(b);
 
 /**
- * Giờ đón còn chọn được của một ngày. Với hôm nay, bỏ các giờ sớm hơn now + leadMinutes.
+ * Giờ đón còn chọn được của một ngày cho một hoạt động:
+ * - trong khung anh rảnh, và giờ đón + thời lượng không quá giờ kết thúc của ngày đó;
+ * - nằm trong giờ đón hợp lý của hoạt động (nếu có);
+ * - với hôm nay, không sớm hơn now + leadMinutes.
  */
-export function slotsFor(date: Date, windows: Windows, step: number, now: Date, leadMinutes: number): string[] {
-  const all = timeSlots(windows[date.getDay()], step);
-  if (!sameDay(date, now)) return all;
-  const earliest = now.getHours() * 60 + now.getMinutes() + leadMinutes;
-  return all.filter((t) => toMin(t) >= earliest);
+export function slotsFor(
+  date: Date,
+  availability: Windows,
+  rule: SlotRule,
+  step: number,
+  now: Date,
+  leadMinutes: number,
+): string[] {
+  const avail = availability[date.getDay()];
+  if (!avail) return [];
+  const latest = toMin(avail[1]) - rule.duration;
+  if (latest < toMin(avail[0])) return [];
+  let slots = timeSlots([avail[0], toHHMM(latest)], step);
+  if (rule.pickupWindows?.length) {
+    const wins = rule.pickupWindows.map(([a, b]) => [toMin(a), toMin(b)] as const);
+    slots = slots.filter((t) => wins.some(([a, b]) => toMin(t) >= a && toMin(t) <= b));
+  }
+  if (sameDay(date, now)) {
+    const earliest = now.getHours() * 60 + now.getMinutes() + leadMinutes;
+    slots = slots.filter((t) => toMin(t) >= earliest);
+  }
+  return slots;
 }
 
 /**
- * Các ngày từ hôm nay đến hết năm (31/12) còn giờ đón chọn được.
- * Hôm nay chỉ tính nếu còn giờ đón sau now + leadMinutes.
+ * Các ngày từ hôm nay đến hết năm (31/12) còn giờ đón chọn được cho hoạt động.
  * Nếu lịch ngắn hơn minDays ngày thì kéo dài thêm cho đủ.
  */
 export function calendarDays(
   now: Date,
-  windows: Windows,
+  availability: Windows,
+  rule: SlotRule,
   minDays: number,
   step: number,
   leadMinutes: number,
@@ -59,7 +87,7 @@ export function calendarDays(
   const end = endOfYear > minEnd ? endOfYear : minEnd;
   const out: Date[] = [];
   for (const d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    if (slotsFor(d, windows, step, now, leadMinutes).length) out.push(new Date(d));
+    if (slotsFor(d, availability, rule, step, now, leadMinutes).length) out.push(new Date(d));
   }
   return out;
 }
@@ -111,7 +139,9 @@ export function groupByWeek(days: Date[], today: Date): WeekGroup[] {
 
 export const formatDay = (d: Date) => `${DAY_FULL[d.getDay()]}, ${dm(d)}`;
 export const formatTime = (t: string) => (t === ANY_TIME ? "giờ nào cũng được" : t);
-export const formatWindow = (w: [string, string] | null | undefined) => (w ? `${w[0]} – ${w[1]}` : "");
+/** "18:00 – 20:30", hoặc "18:00" nếu chỉ có một giờ. */
+export const formatRange = (slots: string[]) =>
+  slots.length === 0 ? "" : slots.length === 1 ? slots[0] : `${slots[0]} – ${slots[slots.length - 1]}`;
 
 export function activityLabel(id: ActivityId | null, other: string): string {
   if (!id) return "";

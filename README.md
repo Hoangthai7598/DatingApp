@@ -1,10 +1,10 @@
 # DatingApp — "Đi chơi không em?" 🎟️
 
-A small, mobile-first invitation page styled as a cinema ticket. The recipient picks an activity, then chooses up to three day + pick-up time options from a week-by-week calendar list (from now until the end of the year), and taps **Chốt vé** to get a ready-made message she can send back via Zalo. There's also a polite "maybe another time" option.
+A small, mobile-first invitation page styled as a cinema ticket. The recipient picks an activity, then chooses one day + pick-up time from a week-by-week calendar list (from now until the end of the year) that only offers times that make sense for that activity, and taps **Chốt vé** to get a ready-made message she can send back via Zalo. There's also a polite "maybe another time" option.
 
 The UI copy is in Vietnamese; everything for developers is in English.
 
-**Live:** https://hoangthai7598.github.io/DatingApp/
+**Live:** https://hoangthai7598.github.io/di-choi-khong/
 
 **Stack:** Next.js 16 (App Router, static export) · React 19 · TypeScript · Vitest · GitHub Actions → GitHub Pages
 
@@ -50,11 +50,22 @@ lib/
 
 | To change | Edit |
 |---|---|
-| Pick-up window per weekday (earliest, latest) | `PICKUP_WINDOWS` in `lib/config.ts` |
+| When you're free per weekday: earliest pick-up, and when the date must be over | `AVAILABILITY` in `lib/config.ts` |
+| Per-activity rules: total duration, allowed pick-up windows (opening hours, meal times), note shown on the calendar | `duration`, `pickupWindows`, `note` in `ACTIVITIES` |
 | Interval between pick-up times (default 30 min) | `STEP_MINUTES` |
 | How far ahead today's earliest pick-up must be (default 60 min) | `LEAD_MINUTES` |
-| Weeks shown before "Xem thêm", max options she can pick | `WEEKS_SHOWN`, `MAX_PICKS` |
+| Weeks shown before "Xem thêm" | `WEEKS_SHOWN` |
 | Activities (title, subtitle) | `ACTIVITIES` in `lib/config.ts` (and the icon in `components/icons.tsx`) |
+
+### How pick-up times are computed
+
+A time is offered only if all of these hold:
+
+1. It's within your `AVAILABILITY` for that weekday, and **pick-up + activity `duration` ends before the day's end time** (e.g. 22:00 on Mon/Tue/Thu).
+2. It falls inside the activity's `pickupWindows`, if it has any. Archery venues in Hanoi typically close around 19:00, so archery only allows pick-ups until 16:30, which effectively means weekend afternoons. Dinner/lunch only offers meal-time pick-ups.
+3. For today, it's at least `LEAD_MINUTES` from now.
+
+Days with no valid time for the chosen activity are hidden. If she switches activity and her pick no longer fits, it's cleared and she's told why. Tapping the selected time or the selected day again unselects it.
 | Sender name used in the message | `FROM` in `lib/config.ts` |
 | Message wording | `lib/invite.ts` — update `lib/invite.test.ts` to match |
 | Heading and intro text | `app/page.tsx` |

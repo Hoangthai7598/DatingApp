@@ -39,6 +39,23 @@ const paths: Record<ActivityId, React.ReactNode> = {
       <circle cx="15" cy="15" r="3.5" fill={Y} />
     </>
   ),
+  patin: (
+    <>
+      <path d="M8 4h6v9h7a4 4 0 0 1 4 4v3H6V6a2 2 0 0 1 2-2z" fill={W} />
+      <path d="M9 8h4M9 11h4" stroke={R} strokeWidth="1.5" />
+      <circle cx="9" cy="24" r="2.6" fill={Y} />
+      <circle cx="16" cy="24" r="2.6" fill={Y} />
+      <circle cx="23" cy="24" r="2.6" fill={Y} />
+    </>
+  ),
+  bang: (
+    <>
+      <path d="M8 4h6v9h7a4 4 0 0 1 4 4v3H6V6a2 2 0 0 1 2-2z" fill={W} />
+      <path d="M9 8h4M9 11h4" stroke={R} strokeWidth="1.5" />
+      <path d="M5 25h21a2 2 0 0 0 2-2" stroke="#8fc8e8" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+      <path d="M10 20v5M21 20v5" stroke={W} strokeWidth="2" />
+    </>
+  ),
   khac: <path d="M15 4l3 7 7 1-5 5 1.5 7.5L15 21l-6.5 3.5L10 17 5 12l7-1z" fill={Y} stroke={W} strokeWidth="1.5" />,
 };
 

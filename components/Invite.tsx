@@ -3,11 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ACTIVITIES,
+  AVAILABILITY,
+  DEFAULT_DURATION,
   FROM,
   LEAD_MINUTES,
-  MAX_PICKS,
   MIN_DAYS,
-  PICKUP_WINDOWS,
   STEP_MINUTES,
   WEEKS_SHOWN,
   ZALO,
@@ -22,13 +22,13 @@ import {
   dayKey,
   formatDay,
   formatTime,
-  formatWindow,
+  formatRange,
   groupByWeek,
   laterMessage,
   relativeDay,
   slotsFor,
   zaloLink,
-  type WeekGroup,
+  type SlotRule,
 } from "@/lib/invite";
 import { ActivityIcon } from "./icons";
 
@@ -38,12 +38,11 @@ type PickedSlot = { key: string; date: Date; time: string };
 export default function Invite() {
   const [activity, setActivity] = useState<ActivityId | null>(null);
   const [other, setOther] = useState("");
-  const [weeks, setWeeks] = useState<WeekGroup[]>([]);
   const [now, setNow] = useState<Date | null>(null);
+  const [dropped, setDropped] = useState<string | null>(null);
   const [shown, setShown] = useState(WEEKS_SHOWN);
   const [openDay, setOpenDay] = useState<string | null>(null);
-  const [picks, setPicks] = useState<PickedSlot[]>([]);
-  const [full, setFull] = useState(false);
+  const [pick, setPick] = useState<PickedSlot | null>(null);
   const [note, setNote] = useState("");
   const [result, setResult] = useState<Result>(null);
   const [copyLabel, setCopyLabel] = useState("Sao chép tin nhắn");
@@ -56,15 +55,33 @@ export default function Invite() {
   // Ngày tính theo giờ máy của người xem, nên chỉ tính sau khi trang chạy trên trình duyệt.
   // Làm mới mỗi phút để các giờ đã qua của hôm nay tự biến mất nếu em để trang mở lâu.
   useEffect(() => {
-    const refresh = () => {
-      const t = new Date();
-      setNow(t);
-      setWeeks(groupByWeek(calendarDays(t, PICKUP_WINDOWS, MIN_DAYS, STEP_MINUTES, LEAD_MINUTES), t));
-    };
+    const refresh = () => setNow(new Date());
     refresh();
     const id = setInterval(refresh, 60_000);
     return () => clearInterval(id);
   }, []);
+
+  const act = ACTIVITIES.find((a) => a.id === activity);
+  const rule: SlotRule = useMemo(() => act ?? { duration: DEFAULT_DURATION }, [act]);
+  const slotsOf = (d: Date) => (now ? slotsFor(d, AVAILABILITY, rule, STEP_MINUTES, now, LEAD_MINUTES) : []);
+  const weeks = useMemo(
+    () => (now ? groupByWeek(calendarDays(now, AVAILABILITY, rule, MIN_DAYS, STEP_MINUTES, LEAD_MINUTES), now) : []),
+    [now, rule],
+  );
+
+  /** Đổi hoạt động: giữ các lựa chọn còn hợp, bỏ các lựa chọn không còn hợp và báo cho em. */
+  const chooseActivity = (id: ActivityId) => {
+    const next = ACTIVITIES.find((a) => a.id === id)!;
+    if (now && pick) {
+      const s = slotsFor(pick.date, AVAILABILITY, next, STEP_MINUTES, now, LEAD_MINUTES);
+      const ok = pick.time === ANY_TIME ? s.length > 0 : s.includes(pick.time);
+      if (!ok) setPick(null);
+      setDropped(ok ? null : `Ngày giờ em chọn không hợp với "${next.title}", em chọn lại giúp anh nhé.`);
+    }
+    setActivity(id);
+    setOpenDay(null);
+    touch();
+  };
 
   useEffect(() => {
     if (activity === "khac") otherRef.current?.focus();
@@ -84,35 +101,39 @@ export default function Invite() {
   }, []);
 
   const what = activityLabel(activity, other);
-  const sorted = useMemo(() => [...picks].sort((a, b) => a.key.localeCompare(b.key)), [picks]);
-  const ready = Boolean(what && picks.length);
+  const ready = Boolean(what && pick);
   const zalo = useMemo(() => zaloLink(ZALO), []);
   const dockOn = ready && !result && !stubVisible;
 
   const touch = () => setResult(null);
 
+  /** Chọn giờ: thay lựa chọn cũ. Chạm lại đúng giờ đang chọn thì bỏ chọn. */
   const pickTime = (date: Date, time: string) => {
     const key = dayKey(date);
-    const existing = picks.find((p) => p.key === key);
-    if (existing?.time === time) {
-      setPicks(picks.filter((p) => p.key !== key));
-      setFull(false);
-    } else if (existing) {
-      setPicks(picks.map((p) => (p.key === key ? { ...p, time } : p)));
-    } else if (picks.length >= MAX_PICKS) {
-      setFull(true);
-      return;
+    if (pick?.key === key && pick.time === time) {
+      setPick(null);
     } else {
-      setPicks([...picks, { key, date, time }]);
+      setPick({ key, date, time });
       setOpenDay(null);
     }
+    setDropped(null);
     touch();
   };
 
-  const removePick = (key: string) => {
-    setPicks(picks.filter((p) => p.key !== key));
-    setFull(false);
+  const clearPick = () => {
+    setPick(null);
+    setDropped(null);
     touch();
+  };
+
+  /** Chạm vào dòng ngày: ngày đang được chọn thì bỏ chọn, còn lại thì mở/đóng danh sách giờ. */
+  const tapDay = (key: string) => {
+    if (pick?.key === key) {
+      clearPick();
+      setOpenDay(null);
+    } else {
+      setOpenDay(openDay === key ? null : key);
+    }
   };
 
   const confirm = () =>
@@ -120,7 +141,7 @@ export default function Invite() {
       text: acceptMessage(
         FROM,
         what,
-        sorted.map((p) => ({ day: formatDay(p.date), time: p.time })),
+        pick ? [{ day: formatDay(pick.date), time: pick.time }] : [],
         note,
       ),
       done: "Em dán tin nhắn này gửi anh qua Zalo là xong nhé 😊",
@@ -144,7 +165,6 @@ export default function Invite() {
     setTimeout(() => setCopyLabel("Sao chép tin nhắn"), 2500);
   };
 
-  const pickLabel = (p: PickedSlot) => `${DAY_SHORT[p.date.getDay()]} ${p.date.getDate()}/${p.date.getMonth() + 1} · ${p.time === ANY_TIME ? "giờ nào cũng được" : p.time}`;
 
   return (
     <main className="ticket">
@@ -157,7 +177,7 @@ export default function Invite() {
               type="button"
               className="opt"
               aria-pressed={activity === a.id}
-              onClick={() => { setActivity(a.id); touch(); }}
+              onClick={() => chooseActivity(a.id)}
             >
               <ActivityIcon id={a.id} />
               <span><b>{a.title}</b><small>{a.sub}</small></span>
@@ -179,21 +199,21 @@ export default function Invite() {
       <section className="sec perf">
         <h2><span>2</span>Hôm nào em được nghỉ?</h2>
         <p className="lead">
-          Chạm vào ngày rồi chọn giờ anh qua đón. Em chọn được tối đa {MAX_PICKS} hôm, anh sẽ xếp theo lịch của em.
+          Chạm vào ngày rồi chọn giờ anh qua đón. Chạm lại lần nữa nếu muốn bỏ chọn.
         </p>
+        {!act && <p className="note">Em chọn đi đâu ở bước 1 trước nhé, giờ đón sẽ khớp với chỗ đó.</p>}
+        {act?.note && <p className="note">{act.note}</p>}
+        {dropped && <p className="warn" role="status">{dropped}</p>}
 
-        {sorted.length > 0 && (
-          <ul className="picked" aria-label="Các lựa chọn của em">
-            {sorted.map((p, i) => (
-              <li key={p.key}>
-                <span className="n">{i + 1}</span>
-                <span className="t">{pickLabel(p)}</span>
-                <button type="button" aria-label={`Bỏ ${pickLabel(p)}`} onClick={() => removePick(p.key)}>×</button>
-              </li>
-            ))}
-          </ul>
+        {pick && (
+          <div className="chosen" role="status">
+            <span className="t">
+              <small>Em đã chọn</small>
+              <b>{formatDay(pick.date)} · {formatTime(pick.time)}</b>
+            </span>
+            <button type="button" aria-label="Bỏ chọn" onClick={clearPick}>×</button>
+          </div>
         )}
-        {full && <p className="warn" role="status">Em chọn đủ {MAX_PICKS} hôm rồi, bỏ bớt một hôm nếu muốn đổi nhé.</p>}
 
         <div className="cal">
           {weeks.slice(0, shown).map((w) => (
@@ -202,21 +222,20 @@ export default function Invite() {
               <ul>
                 {w.days.map((d) => {
                   const k = dayKey(d);
-                  const win = PICKUP_WINDOWS[d.getDay()];
-                  const slots = now ? slotsFor(d, PICKUP_WINDOWS, STEP_MINUTES, now, LEAD_MINUTES) : [];
+                  const slots = slotsOf(d);
                   const rel = now ? relativeDay(d, now) : "";
-                  const range = rel === "Hôm nay" && slots.length ? `${slots[0]} – ${win?.[1]}` : formatWindow(win);
-                  const pick = picks.find((p) => p.key === k);
+                  const picked = pick?.key === k ? pick : null;
                   const open = openDay === k;
                   const weekend = d.getDay() === 0 || d.getDay() === 6;
                   return (
-                    <li key={k} className={`dayrow${pick ? " picked-day" : ""}${open ? " open" : ""}`}>
+                    <li key={k} className={`dayrow${picked ? " picked-day" : ""}${open ? " open" : ""}`}>
                       <button
                         type="button"
                         className="dayhead"
                         aria-expanded={open}
                         aria-controls={`t-${k}`}
-                        onClick={() => setOpenDay(open ? null : k)}
+                        aria-pressed={Boolean(picked)}
+                        onClick={() => tapDay(k)}
                       >
                         <span className={`date${weekend ? " we" : ""}`}>
                           <small>{DAY_SHORT[d.getDay()]}</small>
@@ -224,9 +243,9 @@ export default function Invite() {
                         </span>
                         <span className="info">
                           <b>{formatDay(d)}{rel && <em className="rel">{rel}</em>}</b>
-                          <small>{pick ? `Đã chọn: ${formatTime(pick.time)}` : `Anh đón được ${range}`}</small>
+                          <small>{picked ? `Đã chọn ${formatTime(picked.time)} · chạm để bỏ` : `Anh đón được ${formatRange(slots)}`}</small>
                         </span>
-                        <span className="mark" aria-hidden="true">{pick ? "✓" : open ? "−" : "+"}</span>
+                        <span className="mark" aria-hidden="true">{picked ? "✓" : open ? "−" : "+"}</span>
                       </button>
                       {open && (
                         <div className="slots" id={`t-${k}`}>
@@ -235,7 +254,7 @@ export default function Invite() {
                               key={t}
                               type="button"
                               className="tm"
-                              aria-pressed={pick?.time === t}
+                              aria-pressed={picked?.time === t}
                               onClick={() => pickTime(d, t)}
                             >
                               {t}
@@ -244,7 +263,7 @@ export default function Invite() {
                           <button
                             type="button"
                             className="tm any"
-                            aria-pressed={pick?.time === ANY_TIME}
+                            aria-pressed={picked?.time === ANY_TIME}
                             onClick={() => pickTime(d, ANY_TIME)}
                           >
                             Giờ nào cũng được
@@ -282,14 +301,8 @@ export default function Invite() {
             <dd className={what ? "" : "empty"}>{what || "Chưa chọn"}</dd>
           </div>
           <div className="kv">
-            <dt>{sorted.length > 1 ? "Em rảnh" : "Ngày giờ"}</dt>
-            <dd className={sorted.length ? "" : "empty"}>
-              {sorted.length
-                ? sorted.map((p) => (
-                    <span key={p.key} className="line">{formatDay(p.date)} · {formatTime(p.time)}</span>
-                  ))
-                : "Chưa chọn"}
-            </dd>
+            <dt>Ngày giờ</dt>
+            <dd className={pick ? "" : "empty"}>{pick ? `${formatDay(pick.date)} · ${formatTime(pick.time)}` : "Chưa chọn"}</dd>
           </div>
           {note.trim() && (
             <div className="kv">
@@ -326,7 +339,7 @@ export default function Invite() {
       </section>
 
       <div className={`dock${dockOn ? " on" : ""}`} aria-hidden={!dockOn}>
-        <small>{what} · {sorted.length} lựa chọn</small>
+        <small>{what}{pick ? ` · ${formatDay(pick.date)} · ${formatTime(pick.time)}` : ""}</small>
         <button type="button" className="btn go" tabIndex={dockOn ? 0 : -1} onClick={confirm}>
           Chốt vé này
         </button>
