@@ -147,17 +147,17 @@ export const CINEMAS: CinemaConfig[] = [
 export const SHOWTIMES_MAX_AGE_HOURS = 72;
 
 /**
- * Khi em bấm "Xem phim", trang lấy lịch mới nhất từ CGV/Lotte (qua SHOWTIMES_PROXY).
- * Lỗi gì thì trang dùng public/showtimes.json như bình thường. Đặt false để tắt.
- */
-export const LIVE_SHOWTIMES = true;
-
-/**
  * Proxy lịch chiếu (Cloudflare Worker trong thư mục worker/), vd "https://moi-thuy-showtimes.<tên>.workers.dev".
  * Đặt qua biến repo SHOWTIMES_PROXY_URL trên GitHub (hoặc NEXT_PUBLIC_SHOWTIMES_PROXY khi chạy local).
- * Để trống thì trang gọi thẳng rạp và sẽ bị CORS chặn.
  */
 export const SHOWTIMES_PROXY = process.env.NEXT_PUBLIC_SHOWTIMES_PROXY ?? "";
+
+/**
+ * Khi em bấm "Xem phim", trang thử lấy lịch mới nhất qua SHOWTIMES_PROXY.
+ * Chỉ bật khi có proxy (gọi thẳng rạp thì CORS chặn). Lỗi gì thì dùng public/showtimes.json.
+ * CGV/Lotte hiện chặn cả Cloudflare, nên để trống biến là trang chỉ dùng file (cập nhật bằng npm run showtimes:push).
+ */
+export const LIVE_SHOWTIMES = SHOWTIMES_PROXY !== "";
 
 /** Lấy lịch chiếu bao nhiêu ngày tới (tính cả hôm nay). */
 export const SHOWTIME_DAYS = 7;
