@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Đi chơi không em? 🎟️
 
-## Getting Started
+Trang mời đi chơi dạng tấm vé xem phim. Em chọn đi đâu, ngày nào, giờ đón, rồi bấm **Chốt vé** để có sẵn tin nhắn gửi lại qua Zalo.
 
-First, run the development server:
+**Stack:** Next.js 16 (App Router, static export) · React 19 · TypeScript · Vitest · GitHub Actions → GitHub Pages.
+
+## Chạy local
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+nvm use          # Node 22
+npm ci
+npm run dev      # http://localhost:3000
+npm run check    # lint + typecheck + test + build, giống hệt CI
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Chỉnh nội dung
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Muốn đổi | Sửa ở |
+|---|---|
+| Giờ đón theo từng thứ, số ngày hiện ra, tên anh, các lựa chọn đi chơi | `lib/config.ts` |
+| Câu chữ tin nhắn | `lib/invite.ts` (nhớ sửa test trong `lib/invite.test.ts`) |
+| Giao diện | `components/Invite.tsx`, `app/globals.css` |
+| Tiêu đề, lời mở đầu | `app/page.tsx` |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Số Zalo **không nằm trong code**: đặt ở GitHub repo → *Settings → Secrets and variables → Actions → Variables* → tạo biến `ZALO` (ví dụ `0912345678`). Có biến này thì trang hiện nút "Mở Zalo gửi anh". Chạy local thì dùng `NEXT_PUBLIC_ZALO=09... npm run dev`.
 
-## Learn More
+## CI/CD
 
-To learn more about Next.js, take a look at the following resources:
+`.github/workflows/pipeline.yml`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Sự kiện | Chạy |
+|---|---|
+| Mở / cập nhật Pull Request | **CI**: lint → typecheck → test → build |
+| Push / merge vào `main` | **CI**, xong thì **Deploy** lên GitHub Pages |
+| Bấm *Run workflow* tay | như push vào `main` |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Dependabot (`.github/dependabot.yml`) mở PR cập nhật npm và GitHub Actions mỗi tuần, PR đó cũng đi qua CI.
 
-## Deploy on Vercel
+## Deploy lần đầu
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Tạo repo trống trên GitHub (gợi ý tên: `di-choi-khong`).
+2. Push:
+   ```bash
+   git remote add origin https://github.com/<user>/<repo>.git
+   git push -u origin main
+   ```
+3. Repo → **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+4. Tab **Actions** → *CI/CD* → **Run workflow** (hoặc push thêm một commit).
+5. Link: `https://<user>.github.io/<repo>/`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Repo trên tài khoản GitHub Free phải để **Public** thì Pages mới chạy; trang đã có `noindex` để không lên Google.
+
+Nên bật thêm *Settings → Branches → Add rule* cho `main`: **Require status checks to pass** → chọn job *Lint · Typecheck · Test · Build*, để PR lỗi không merge được.
