@@ -1,21 +1,76 @@
 import { describe, expect, it } from "vitest";
-import { SLOTS } from "./config";
-import { acceptMessage, activityLabel, formatDay, laterMessage, upcomingDays, zaloLink } from "./invite";
+import { PICKUP_WINDOWS } from "./config";
+import {
+  ANY_TIME,
+  acceptMessage,
+  activityLabel,
+  calendarDays,
+  dayKey,
+  relativeDay,
+  slotsFor,
+  formatDay,
+  groupByWeek,
+  laterMessage,
+  timeSlots,
+  zaloLink,
+} from "./invite";
 
-describe("upcomingDays", () => {
-  it("bắt đầu từ ngày mai và đủ số ngày khi ngày nào cũng rảnh", () => {
-    const wed = new Date(2026, 10, 25); // Thứ 4, 25/11/2026
-    const days = upcomingDays(wed, 14, SLOTS);
-    expect(days).toHaveLength(14);
-    expect(formatDay(days[0])).toBe("Thứ 5, 26/11");
-    expect(formatDay(days[13])).toBe("Thứ 4, 9/12");
+const WED_25_NOV = new Date(2026, 10, 25, 9, 0); // 9h sáng thứ 4
+const cal = (now: Date, w = PICKUP_WINDOWS, min = 14) => calendarDays(now, w, min, 30, 60);
+
+describe("timeSlots", () => {
+  it("cách nhau 30 phút, tính cả hai đầu", () =>
+    expect(timeSlots(["18:00", "20:30"], 30)).toEqual(["18:00", "18:30", "19:00", "19:30", "20:00", "20:30"]));
+  it("cuối tuần từ 12:00 đến 21:00 có 19 mốc", () => expect(timeSlots(["12:00", "21:00"], 30)).toHaveLength(19));
+  it("rỗng khi không có khung giờ", () => expect(timeSlots(null, 30)).toEqual([]));
+});
+
+describe("slotsFor", () => {
+  it("hôm nay bỏ các giờ chưa kịp đón (cách hiện tại dưới 60 phút)", () => {
+    const now = new Date(2026, 10, 25, 18, 40); // thứ 4, khung 18:00 – 21:30
+    expect(slotsFor(now, PICKUP_WINDOWS, 30, now, 60)).toEqual(["20:00", "20:30", "21:00", "21:30"]);
   });
+  it("ngày khác giữ đủ khung giờ", () => {
+    const fri = new Date(2026, 10, 27);
+    expect(slotsFor(fri, PICKUP_WINDOWS, 30, WED_25_NOV, 60)).toHaveLength(8);
+  });
+});
 
-  it("bỏ qua ngày không có giờ rảnh", () => {
-    const wed = new Date(2026, 10, 25);
-    const days = upcomingDays(wed, 7, { ...SLOTS, 1: [] });
-    expect(days.some((d) => d.getDay() === 1)).toBe(false);
-    expect(days).toHaveLength(6);
+describe("calendarDays", () => {
+  it("bắt đầu từ hôm nay và chạy đến hết 31/12", () => {
+    const days = cal(WED_25_NOV);
+    expect(formatDay(days[0])).toBe("Thứ 4, 25/11");
+    expect(dayKey(days[days.length - 1])).toBe("2026-12-31");
+    expect(days).toHaveLength(37);
+  });
+  it("hôm nay hết giờ đón thì bắt đầu từ ngày mai", () => {
+    const late = new Date(2026, 10, 25, 21, 0);
+    expect(formatDay(cal(late)[0])).toBe("Thứ 5, 26/11");
+  });
+  it("cuối năm thì kéo dài sang năm sau cho đủ số ngày tối thiểu", () => {
+    const days = cal(new Date(2026, 11, 28, 9, 0));
+    expect(dayKey(days[0])).toBe("2026-12-28");
+    expect(dayKey(days[days.length - 1])).toBe("2027-01-11");
+  });
+  it("bỏ qua ngày không có khung giờ", () => {
+    expect(cal(WED_25_NOV, { ...PICKUP_WINDOWS, 1: null }).some((d) => d.getDay() === 1)).toBe(false);
+  });
+});
+
+describe("relativeDay", () => {
+  it("hôm nay / ngày mai / rỗng", () => {
+    expect(relativeDay(new Date(2026, 10, 25, 12), WED_25_NOV)).toBe("Hôm nay");
+    expect(relativeDay(new Date(2026, 10, 26, 12), WED_25_NOV)).toBe("Ngày mai");
+    expect(relativeDay(new Date(2026, 10, 27, 12), WED_25_NOV)).toBe("");
+  });
+});
+
+describe("groupByWeek", () => {
+  it("chia theo tuần thứ 2 → chủ nhật và đặt tên", () => {
+    const groups = groupByWeek(cal(WED_25_NOV), WED_25_NOV);
+    expect(groups.map((g) => g.label).slice(0, 3)).toEqual(["Tuần này", "Tuần sau", "Tuần 7/12 – 13/12"]);
+    expect(groups[0].days.map(formatDay)).toEqual(["Thứ 4, 25/11", "Thứ 5, 26/11", "Thứ 6, 27/11", "Thứ 7, 28/11", "Chủ nhật, 29/11"]);
+    expect(groups.at(-1)?.label).toBe("Tuần 28/12 – 3/1");
   });
 });
 
@@ -27,14 +82,28 @@ describe("activityLabel", () => {
 });
 
 describe("tin nhắn", () => {
-  it("chốt vé có đủ thông tin, bỏ dòng lời dặn khi trống", () => {
-    const msg = acceptMessage("Thái", { activity: "Bowling", day: "Thứ 7, 28/11", time: "14:00", note: "  " });
-    expect(msg).toContain("• Đi: Bowling");
+  it("một lựa chọn: ngày và giờ đón, bỏ lời dặn khi trống", () => {
+    const msg = acceptMessage("Thái", "Bowling", [{ day: "Thứ 7, 28/11", time: "14:00" }], "  ");
+    expect(msg).toContain("• Ngày: Thứ 7, 28/11");
     expect(msg).toContain("• Anh qua đón lúc: 14:00");
     expect(msg).not.toContain("Em dặn");
   });
-  it("có lời dặn khi em ghi", () => {
-    const msg = acceptMessage("Thái", { activity: "Cafe chill", day: "Thứ 4, 2/12", time: "18:30", note: "mang mũ nhé" });
+  it("một lựa chọn, giờ nào cũng được", () => {
+    const msg = acceptMessage("Thái", "Cafe chill", [{ day: "Thứ 4, 2/12", time: ANY_TIME }]);
+    expect(msg).toContain("• Giờ: anh chọn giờ nhé");
+  });
+  it("nhiều lựa chọn được đánh số, có lời dặn", () => {
+    const msg = acceptMessage(
+      "Thái",
+      "Xem phim",
+      [
+        { day: "Thứ 6, 27/11", time: "19:00" },
+        { day: "Chủ nhật, 29/11", time: ANY_TIME },
+      ],
+      "mang mũ nhé",
+    );
+    expect(msg).toContain("1. Thứ 6, 27/11 – 19:00");
+    expect(msg).toContain("2. Chủ nhật, 29/11 – giờ nào cũng được");
     expect(msg.endsWith("• Em dặn: mang mũ nhé")).toBe(true);
   });
   it("hẹn hôm khác", () => expect(laterMessage("Thái")).toMatch(/để hôm khác/));

@@ -1,6 +1,6 @@
 # DatingApp — "Đi chơi không em?" 🎟️
 
-A small, mobile-first invitation page styled as a cinema ticket. The recipient picks an activity, a day and a pick-up time, then taps **Chốt vé** to get a ready-made message she can send back via Zalo. There's also a polite "maybe another time" option.
+A small, mobile-first invitation page styled as a cinema ticket. The recipient picks an activity, then chooses up to three day + pick-up time options from a week-by-week calendar list (from now until the end of the year), and taps **Chốt vé** to get a ready-made message she can send back via Zalo. There's also a polite "maybe another time" option.
 
 The UI copy is in Vietnamese; everything for developers is in English.
 
@@ -50,7 +50,10 @@ lib/
 
 | To change | Edit |
 |---|---|
-| Pick-up times per weekday, number of days shown | `SLOTS`, `NUM_DAYS` in `lib/config.ts` |
+| Pick-up window per weekday (earliest, latest) | `PICKUP_WINDOWS` in `lib/config.ts` |
+| Interval between pick-up times (default 30 min) | `STEP_MINUTES` |
+| How far ahead today's earliest pick-up must be (default 60 min) | `LEAD_MINUTES` |
+| Weeks shown before "Xem thêm", max options she can pick | `WEEKS_SHOWN`, `MAX_PICKS` |
 | Activities (title, subtitle) | `ACTIVITIES` in `lib/config.ts` (and the icon in `components/icons.tsx`) |
 | Sender name used in the message | `FROM` in `lib/config.ts` |
 | Message wording | `lib/invite.ts` — update `lib/invite.test.ts` to match |
@@ -118,4 +121,4 @@ chore(deps): bump next to 16.5
 
 - Static export only: no server, API routes or server actions.
 - The page sets `noindex`, so it won't show up in search engines.
-- Days are computed in the visitor's browser, so "tomorrow" is always relative to her local date.
+- The calendar runs from today until 31 December (at least `MIN_DAYS` days). It's computed in the visitor's browser, so "today" is her local date, and past pick-up times disappear while the page is open.
