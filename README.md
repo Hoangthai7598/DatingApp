@@ -51,3 +51,4 @@ Dependabot (`.github/dependabot.yml`) mở PR cập nhật npm và GitHub Action
 Repo trên tài khoản GitHub Free phải để **Public** thì Pages mới chạy; trang đã có `noindex` để không lên Google.
 
 Nên bật thêm *Settings → Branches → Add rule* cho `main`: **Require status checks to pass** → chọn job *Lint · Typecheck · Test · Build*, để PR lỗi không merge được.
+# DatingApp
