@@ -168,6 +168,25 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visib
   .dock.on { animation: up .25s ease-out; }
   @keyframes up { from { transform: translateY(100%); } }
 }
+.fb {
+  max-width: 560px; margin: 22px auto 0; padding: 20px clamp(18px, 5vw, 30px); border-radius: 18px;
+  background: rgba(255, 244, 246, .08); border: 1px dashed rgba(247, 201, 212, .45); color: #fbe9ee;
+}
+.fb h2 { color: #fff; margin-bottom: 6px; }
+.fb > p { margin: 0 0 12px; color: var(--rose); font-size: 15px; }
+.fb textarea { min-height: 88px; background: rgba(255, 255, 255, .96); }
+.fb-go { width: 100%; margin-top: 10px; background: var(--rose); color: var(--wine); }
+.fb-go:disabled { opacity: .5; cursor: not-allowed; }
+.fb-out { margin-top: 12px; }
+.out.saved { display: grid; gap: 4px; padding: 14px; border-radius: 12px; background: rgba(255, 210, 63, .14); }
+.out.saved b { color: var(--pop); font-size: 18px; }
+.out.saved span { color: #fbe9ee; font-size: 15px; }
+.fb-hint { margin: 8px 0 0; font-size: 13px; color: var(--rose); text-align: center; }
+.fb-err { margin: 0 0 10px; padding: 10px 12px; border-radius: 10px; background: #fff3c4; color: #5a4300; font-size: 14px; }
+.fb-sent { display: grid; gap: 4px; padding: 14px; border-radius: 12px; background: rgba(255, 210, 63, .14); }
+.fb-sent b { color: var(--pop); font-size: 17px; }
+.fb-sent span { color: #fbe9ee; font-size: 15px; }
+.fb-out pre { white-space: pre-wrap; background: var(--deep); border-radius: 12px; padding: 12px; margin: 0 0 10px; font: inherit; font-size: 15px; }
 .foot { max-width: 560px; margin: 18px auto 0; text-align: center; color: var(--rose); font-size: 13px; }
 @media (prefers-reduced-motion: no-preference) {
   .ticket { animation: rise .5s ease-out; }

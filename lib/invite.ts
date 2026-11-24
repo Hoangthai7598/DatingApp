@@ -1,4 +1,4 @@
-import { ACTIVITIES, type ActivityId } from "./config";
+import { ACTIVITIES, type ActivityId, type DayAvailability } from "./config";
 
 export const DAY_SHORT = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
 export const DAY_FULL = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
@@ -6,7 +6,7 @@ export const DAY_FULL = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ
 /** Giá trị đặc biệt: em không chốt giờ, để anh chọn. */
 export const ANY_TIME = "any";
 
-type Windows = Record<number, [string, string] | null>;
+type Availability = Record<number, DayAvailability | null>;
 
 /** Điều kiện giờ đón của một hoạt động. */
 export interface SlotRule {
@@ -39,30 +39,38 @@ const sameDay = (a: Date, b: Date) => dayKey(a) === dayKey(b);
 
 /**
  * Giờ đón còn chọn được của một ngày cho một hoạt động:
- * - trong khung anh rảnh, và giờ đón + thời lượng không quá giờ kết thúc của ngày đó;
- * - nằm trong giờ đón hợp lý của hoạt động (nếu có);
+ * - không sớm hơn lúc anh rảnh + thời gian đi sang chỗ em;
+ * - đón + thời lượng phải đưa em về trước dropOffBy, và trước homeBy - thời gian anh đi về (nếu có);
+ * - không muộn hơn latestPickup (nếu có);
+ * - nằm trong giờ đón hợp lý của hoạt động (giờ mở cửa, giờ ăn…), nếu có;
  * - với hôm nay, không sớm hơn now + leadMinutes.
  */
 export function slotsFor(
   date: Date,
-  availability: Windows,
+  availability: Availability,
   rule: SlotRule,
   step: number,
   now: Date,
   leadMinutes: number,
+  travelMinutes = 0,
 ): string[] {
-  const avail = availability[date.getDay()];
-  if (!avail) return [];
-  const latest = toMin(avail[1]) - rule.duration;
-  if (latest < toMin(avail[0])) return [];
-  let slots = timeSlots([avail[0], toHHMM(latest)], step);
+  const day = availability[date.getDay()];
+  if (!day) return [];
+  const earliest = toMin(day.free) + travelMinutes;
+  const dropOff = Math.min(
+    toMin(day.dropOffBy),
+    day.homeBy ? toMin(day.homeBy) - travelMinutes : Infinity,
+  );
+  const latest = Math.min(dropOff - rule.duration, day.latestPickup ? toMin(day.latestPickup) : Infinity);
+  if (latest < earliest) return [];
+  let slots = timeSlots([toHHMM(earliest), toHHMM(latest)], step);
   if (rule.pickupWindows?.length) {
     const wins = rule.pickupWindows.map(([a, b]) => [toMin(a), toMin(b)] as const);
     slots = slots.filter((t) => wins.some(([a, b]) => toMin(t) >= a && toMin(t) <= b));
   }
   if (sameDay(date, now)) {
-    const earliest = now.getHours() * 60 + now.getMinutes() + leadMinutes;
-    slots = slots.filter((t) => toMin(t) >= earliest);
+    const soonest = now.getHours() * 60 + now.getMinutes() + leadMinutes;
+    slots = slots.filter((t) => toMin(t) >= soonest);
   }
   return slots;
 }
@@ -73,11 +81,12 @@ export function slotsFor(
  */
 export function calendarDays(
   now: Date,
-  availability: Windows,
+  availability: Availability,
   rule: SlotRule,
   minDays: number,
   step: number,
   leadMinutes: number,
+  travelMinutes = 0,
 ): Date[] {
   const start = new Date(now);
   start.setHours(12, 0, 0, 0);
@@ -87,7 +96,7 @@ export function calendarDays(
   const end = endOfYear > minEnd ? endOfYear : minEnd;
   const out: Date[] = [];
   for (const d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    if (slotsFor(d, availability, rule, step, now, leadMinutes).length) out.push(new Date(d));
+    if (slotsFor(d, availability, rule, step, now, leadMinutes, travelMinutes).length) out.push(new Date(d));
   }
   return out;
 }
@@ -147,40 +156,4 @@ export function activityLabel(id: ActivityId | null, other: string): string {
   if (!id) return "";
   if (id === "khac") return other.trim() || "Em chọn chỗ khác";
   return ACTIVITIES.find((a) => a.id === id)?.title ?? "";
-}
-
-export interface Slot {
-  day: string; // đã format, vd "Thứ 7, 28/11"
-  time: string; // "14:00" hoặc ANY_TIME
-}
-
-export function acceptMessage(from: string, activity: string, slots: Slot[], note?: string): string {
-  const lines = [`Anh ${from} ơi, em chốt vé nhé 🎟️`, `• Đi: ${activity}`];
-  if (slots.length === 1) {
-    const [s] = slots;
-    lines.push(`• Ngày: ${s.day}`);
-    lines.push(s.time === ANY_TIME ? "• Giờ: anh chọn giờ nhé" : `• Anh qua đón lúc: ${s.time}`);
-  } else {
-    lines.push("• Em rảnh mấy hôm này, anh chọn một nhé:");
-    slots.forEach((s, i) => lines.push(`   ${i + 1}. ${s.day} – ${formatTime(s.time)}`));
-  }
-  const n = note?.trim();
-  if (n) lines.push(`• Em dặn: ${n}`);
-  return lines.join("\n");
-}
-
-export const laterMessage = (from: string) =>
-  `Anh ${from} ơi, dạo này em hơi bận, để hôm khác mình đi nhé. Khi nào rảnh em báo anh 😊`;
-
-/**
- * Link mở Zalo tới số của anh; rỗng nếu chưa cấu hình.
- * Dạng chuẩn là zalo.me/84xxxxxxxxx: bỏ số 0 đầu, thêm mã nước 84.
- * Trên điện thoại link này mở thẳng app Zalo; trên máy tính Zalo hiện trang có mã QR.
- */
-export function zaloLink(phone: string): string {
-  let digits = phone.replace(/\D/g, "");
-  if (!digits) return "";
-  if (digits.startsWith("0")) digits = "84" + digits.slice(1);
-  else if (!digits.startsWith("84")) digits = "84" + digits;
-  return `https://zalo.me/${digits}`;
 }

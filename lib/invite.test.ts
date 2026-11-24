@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ACTIVITIES, AVAILABILITY, type ActivityId } from "./config";
 import {
-  ANY_TIME,
-  acceptMessage,
   activityLabel,
   calendarDays,
   dayKey,
@@ -11,16 +9,15 @@ import {
   slotsFor,
   formatDay,
   groupByWeek,
-  laterMessage,
   timeSlots,
-  zaloLink,
 } from "./invite";
 
 const WED_25_NOV = new Date(2026, 10, 25, 9, 0); // 9h sáng thứ 4
 const rule = (id: ActivityId) => ACTIVITIES.find((a) => a.id === id)!;
 const CAFE = rule("cafe");
-const cal = (now: Date, r = CAFE, w = AVAILABILITY, min = 14) => calendarDays(now, w, r, min, 30, 60);
-const slots = (d: Date, id: ActivityId, now = WED_25_NOV) => slotsFor(d, AVAILABILITY, rule(id), 30, now, 60);
+// 30 phút mỗi chiều giữa nhà anh và chỗ em
+const cal = (now: Date, r = CAFE, w = AVAILABILITY, min = 14) => calendarDays(now, w, r, min, 30, 60, 30);
+const slots = (d: Date, id: ActivityId, now = WED_25_NOV) => slotsFor(d, AVAILABILITY, rule(id), 30, now, 60, 30);
 const MON = new Date(2026, 10, 30);
 const SAT = new Date(2026, 10, 28);
 
@@ -31,30 +28,37 @@ describe("timeSlots", () => {
   it("rỗng khi không có khung giờ", () => expect(timeSlots(null, 30)).toEqual([]));
 });
 
-describe("slotsFor: điều kiện theo hoạt động", () => {
-  it("cafe tối thứ 2: xong trước 22h nên đón muộn nhất 20:30", () =>
-    expect(slots(MON, "cafe")).toEqual(["18:00", "18:30", "19:00", "19:30", "20:00", "20:30"]));
-  it("xem phim tối thứ 2: 3 tiếng nên đón muộn nhất 19:00", () =>
-    expect(slots(MON, "phim")).toEqual(["18:00", "18:30", "19:00"]));
+describe("slotsFor: đường đi, tối họp và điều kiện theo hoạt động", () => {
+  it("đón sớm nhất = lúc anh rảnh + 30 phút đi sang", () => {
+    expect(slots(MON, "cafe")[0]).toBe("18:30");
+    expect(slots(SAT, "cafe")[0]).toBe("12:30");
+  });
+  it("tối họp (thứ 2, 3, 5): đón muộn nhất 19:00", () => expect(slots(MON, "cafe")).toEqual(["18:30", "19:00"]));
+  it("tối họp + xem phim 3 tiếng: phải về nhà trước 22h nên chỉ đón 18:30", () =>
+    expect(slots(MON, "phim")).toEqual(["18:30"]));
+  it("tối họp + trượt băng: 18:30 – 19:00", () => expect(slots(MON, "bang")).toEqual(["18:30", "19:00"]));
   it("bắn cung: không có buổi tối trong tuần", () => expect(slots(MON, "cung")).toEqual([]));
-  it("bắn cung cuối tuần: 12:00 – 16:30", () => {
+  it("bắn cung cuối tuần: 12:30 – 16:30", () => {
     const s = slots(SAT, "cung");
-    expect(s[0]).toBe("12:00");
+    expect(s[0]).toBe("12:30");
     expect(s.at(-1)).toBe("16:30");
   });
   it("đi ăn cuối tuần: chỉ giờ bữa trưa và bữa tối", () =>
-    expect(slots(SAT, "an")).toEqual(["12:00", "12:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00"]));
-  it("bowling thứ 4: xong trước 23h nên đón muộn nhất 21:00", () =>
-    expect(slots(new Date(2026, 11, 2), "bowling").at(-1)).toBe("21:00"));
+    expect(slots(SAT, "an")).toEqual(["12:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00"]));
+  it("tối không họp (thứ 4): bowling đưa em về trước 23h nên đón muộn nhất 21:00", () => {
+    const wed = new Date(2026, 11, 2);
+    expect(slots(wed, "bowling")[0]).toBe("18:30");
+    expect(slots(wed, "bowling").at(-1)).toBe("21:00");
+  });
   it("trượt băng cuối tuần: đón muộn nhất 20:00", () => expect(slots(SAT, "bang").at(-1)).toBe("20:00"));
-  it("trượt băng tối thứ 2: xong trước 22h nên đón muộn nhất 19:30", () =>
-    expect(slots(MON, "bang")).toEqual(["18:00", "18:30", "19:00", "19:30"]));
-  it("trượt patin tối thứ 4: đón muộn nhất 19:30", () =>
-    expect(slots(new Date(2026, 11, 2), "patin")).toEqual(["18:00", "18:30", "19:00", "19:30"]));
+  it("trượt patin tối thứ 4: 18:30 – 19:30", () =>
+    expect(slots(new Date(2026, 11, 2), "patin")).toEqual(["18:30", "19:00", "19:30"]));
   it("hôm nay bỏ các giờ chưa kịp đón (cách hiện tại dưới 60 phút)", () => {
     const now = new Date(2026, 10, 25, 18, 40);
     expect(slots(now, "cafe", now)).toEqual(["20:00", "20:30", "21:00", "21:30"]);
   });
+  it("không tính đường đi khi travelMinutes = 0", () =>
+    expect(slotsFor(MON, AVAILABILITY, CAFE, 30, WED_25_NOV, 60)[0]).toBe("18:00"));
 });
 
 describe("calendarDays", () => {
@@ -109,38 +113,4 @@ describe("activityLabel", () => {
   it("dùng chữ em tự ghi khi chọn chỗ khác", () => expect(activityLabel("khac", " Hồ Tây ")).toBe("Hồ Tây"));
   it("có chữ mặc định khi em chưa ghi", () => expect(activityLabel("khac", "")).toBe("Em chọn chỗ khác"));
   it("rỗng khi chưa chọn", () => expect(activityLabel(null, "")).toBe(""));
-});
-
-describe("tin nhắn", () => {
-  it("một lựa chọn: ngày và giờ đón, bỏ lời dặn khi trống", () => {
-    const msg = acceptMessage("Thái", "Bowling", [{ day: "Thứ 7, 28/11", time: "14:00" }], "  ");
-    expect(msg).toContain("• Ngày: Thứ 7, 28/11");
-    expect(msg).toContain("• Anh qua đón lúc: 14:00");
-    expect(msg).not.toContain("Em dặn");
-  });
-  it("một lựa chọn, giờ nào cũng được", () => {
-    const msg = acceptMessage("Thái", "Cafe chill", [{ day: "Thứ 4, 2/12", time: ANY_TIME }]);
-    expect(msg).toContain("• Giờ: anh chọn giờ nhé");
-  });
-  it("nhiều lựa chọn được đánh số, có lời dặn", () => {
-    const msg = acceptMessage(
-      "Thái",
-      "Xem phim",
-      [
-        { day: "Thứ 6, 27/11", time: "19:00" },
-        { day: "Chủ nhật, 29/11", time: ANY_TIME },
-      ],
-      "mang mũ nhé",
-    );
-    expect(msg).toContain("1. Thứ 6, 27/11 – 19:00");
-    expect(msg).toContain("2. Chủ nhật, 29/11 – giờ nào cũng được");
-    expect(msg.endsWith("• Em dặn: mang mũ nhé")).toBe(true);
-  });
-  it("hẹn hôm khác", () => expect(laterMessage("Thái")).toMatch(/để hôm khác/));
-});
-
-describe("zaloLink", () => {
-  it("bỏ số 0 đầu, thêm 84 và lọc ký tự lạ", () => expect(zaloLink("091 234-5678")).toBe("https://zalo.me/84912345678"));
-  it("giữ nguyên số đã có 84 hoặc +84", () => expect(zaloLink("+84 912 345 678")).toBe("https://zalo.me/84912345678"));
-  it("rỗng khi chưa cấu hình", () => expect(zaloLink("")).toBe(""));
 });

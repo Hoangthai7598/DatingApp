@@ -5,18 +5,16 @@ import {
   ACTIVITIES,
   AVAILABILITY,
   DEFAULT_DURATION,
-  FROM,
   LEAD_MINUTES,
   MIN_DAYS,
   STEP_MINUTES,
+  TRAVEL_MINUTES,
   WEEKS_SHOWN,
-  ZALO,
   type ActivityId,
 } from "@/lib/config";
 import {
   ANY_TIME,
   DAY_SHORT,
-  acceptMessage,
   activityLabel,
   calendarDays,
   dayKey,
@@ -24,15 +22,17 @@ import {
   formatTime,
   formatRange,
   groupByWeek,
-  laterMessage,
   relativeDay,
   slotsFor,
-  zaloLink,
   type SlotRule,
 } from "@/lib/invite";
+import { sendBooking, userAgent } from "@/lib/store";
+import Feedback from "./Feedback";
 import { ActivityIcon } from "./icons";
 
-type Result = { text: string; done: string } | null;
+type Kind = "accept" | "later";
+/** Kết quả gửi: đã lưu (anh nhận được qua Telegram) hoặc lỗi mạng sau khi đã tự thử lại. */
+type Result = { kind: Kind; status: "saved" | "error" } | null;
 type PickedSlot = { key: string; date: Date; time: string };
 
 export default function Invite() {
@@ -40,16 +40,15 @@ export default function Invite() {
   const [other, setOther] = useState("");
   const [now, setNow] = useState<Date | null>(null);
   const [dropped, setDropped] = useState<string | null>(null);
+  const [sending, setSending] = useState<Kind | null>(null);
   const [shown, setShown] = useState(WEEKS_SHOWN);
   const [openDay, setOpenDay] = useState<string | null>(null);
   const [pick, setPick] = useState<PickedSlot | null>(null);
   const [note, setNote] = useState("");
   const [result, setResult] = useState<Result>(null);
-  const [copyLabel, setCopyLabel] = useState("Sao chép tin nhắn");
   const [stubVisible, setStubVisible] = useState(false);
   const otherRef = useRef<HTMLInputElement>(null);
   const outRef = useRef<HTMLDivElement>(null);
-  const msgRef = useRef<HTMLPreElement>(null);
   const stubRef = useRef<HTMLElement>(null);
 
   // Ngày tính theo giờ máy của người xem, nên chỉ tính sau khi trang chạy trên trình duyệt.
@@ -63,9 +62,9 @@ export default function Invite() {
 
   const act = ACTIVITIES.find((a) => a.id === activity);
   const rule: SlotRule = useMemo(() => act ?? { duration: DEFAULT_DURATION }, [act]);
-  const slotsOf = (d: Date) => (now ? slotsFor(d, AVAILABILITY, rule, STEP_MINUTES, now, LEAD_MINUTES) : []);
+  const slotsOf = (d: Date) => (now ? slotsFor(d, AVAILABILITY, rule, STEP_MINUTES, now, LEAD_MINUTES, TRAVEL_MINUTES) : []);
   const weeks = useMemo(
-    () => (now ? groupByWeek(calendarDays(now, AVAILABILITY, rule, MIN_DAYS, STEP_MINUTES, LEAD_MINUTES), now) : []),
+    () => (now ? groupByWeek(calendarDays(now, AVAILABILITY, rule, MIN_DAYS, STEP_MINUTES, LEAD_MINUTES, TRAVEL_MINUTES), now) : []),
     [now, rule],
   );
 
@@ -73,7 +72,7 @@ export default function Invite() {
   const chooseActivity = (id: ActivityId) => {
     const next = ACTIVITIES.find((a) => a.id === id)!;
     if (now && pick) {
-      const s = slotsFor(pick.date, AVAILABILITY, next, STEP_MINUTES, now, LEAD_MINUTES);
+      const s = slotsFor(pick.date, AVAILABILITY, next, STEP_MINUTES, now, LEAD_MINUTES, TRAVEL_MINUTES);
       const ok = pick.time === ANY_TIME ? s.length > 0 : s.includes(pick.time);
       if (!ok) setPick(null);
       setDropped(ok ? null : `Ngày giờ em chọn không hợp với "${next.title}", em chọn lại giúp anh nhé.`);
@@ -102,8 +101,7 @@ export default function Invite() {
 
   const what = activityLabel(activity, other);
   const ready = Boolean(what && pick);
-  const zalo = useMemo(() => zaloLink(ZALO), []);
-  const dockOn = ready && !result && !stubVisible;
+  const dockOn = ready && !result && !stubVisible && !sending;
 
   const touch = () => setResult(null);
 
@@ -136,37 +134,34 @@ export default function Invite() {
     }
   };
 
-  const confirm = () =>
-    setResult({
-      text: acceptMessage(
-        FROM,
-        what,
-        pick ? [{ day: formatDay(pick.date), time: pick.time }] : [],
-        note,
-      ),
-      done: "Em dán tin nhắn này gửi anh qua Zalo là xong nhé 😊",
-    });
+  const slotLabel = pick ? `${formatDay(pick.date)} · ${formatTime(pick.time)}` : "";
 
-  const copy = async () => {
-    if (!result) return;
+  /** Gửi vé (hoặc "để hôm khác") vào database; database báo Telegram cho anh. Tự thử lại khi mạng chập chờn. */
+  const submit = async (kind: Kind) => {
+    if (sending) return;
+    setSending(kind);
     try {
-      await navigator.clipboard.writeText(result.text);
-      setCopyLabel("Đã sao chép ✓");
+      await sendBooking(
+        kind === "accept"
+          ? { kind, activity: what, day: pick?.key, pickup_time: pick?.time, slot_label: slotLabel, note, user_agent: userAgent() }
+          : { kind, activity: what || null, note, user_agent: userAgent() },
+      );
+      setResult({ kind, status: "saved" });
     } catch {
-      const sel = getSelection();
-      if (msgRef.current && sel) {
-        const r = document.createRange();
-        r.selectNodeContents(msgRef.current);
-        sel.removeAllRanges();
-        sel.addRange(r);
-      }
-      setCopyLabel("Đã bôi đen, em nhấn giữ để sao chép");
+      setResult({ kind, status: "error" });
+    } finally {
+      setSending(null);
     }
-    setTimeout(() => setCopyLabel("Sao chép tin nhắn"), 2500);
   };
+
+  const confirm = () => submit("accept");
+
+
+
 
 
   return (
+    <>
     <main className="ticket">
       <section className="sec">
         <h2><span>1</span>Em muốn đi đâu?</h2>
@@ -311,28 +306,53 @@ export default function Invite() {
             </div>
           )}
         </dl>
-        <button type="button" className="btn go" disabled={!ready} onClick={confirm}>
-          Chốt vé này
+        <button
+          type="button"
+          className="btn go"
+          disabled={!ready || Boolean(sending) || result?.status === "saved"}
+          onClick={confirm}
+        >
+          {sending === "accept"
+            ? "Đang gửi vé…"
+            : result?.status === "saved" && result.kind === "accept"
+              ? "Đã gửi vé ✓"
+              : result?.status === "error" && result.kind === "accept"
+                ? "Gửi lại vé"
+                : "Chốt vé này"}
         </button>
         {!ready && <p className="need">{!what ? "Em chọn đi đâu ở bước 1 nhé" : "Em chọn ít nhất một ngày ở bước 2 nhé"}</p>}
 
-        {result && (
-          <div className="out" ref={outRef}>
-            <pre ref={msgRef}>{result.text}</pre>
-            <div className="row">
-              <button type="button" className="btn light" onClick={copy}>{copyLabel}</button>
-              {zalo && (
-                <a className="btn light" href={zalo} target="_blank" rel="noopener noreferrer">Mở Zalo gửi anh</a>
-              )}
-            </div>
-            <p className="done">{result.done}</p>
+        {result?.status === "saved" && (
+          <div className="out saved" ref={outRef} role="status">
+            {result.kind === "accept" ? (
+              <>
+                <b>Anh nhận được vé rồi 🎟️</b>
+                <span>{what} · {slotLabel}</span>
+                <span>Anh sẽ nhắn em xác nhận sớm nhé. Muốn đổi thì em chọn lại rồi chốt lần nữa là được.</span>
+              </>
+            ) : (
+              <>
+                <b>Anh nhận được rồi nha</b>
+                <span>Không sao đâu em, cứ nghỉ ngơi đã nhé. Khi nào rảnh em quay lại đây chọn ngày, anh đợi được 😊</span>
+              </>
+            )}
+          </div>
+        )}
+
+        {result?.status === "error" && (
+          <div className="out" ref={outRef} role="alert">
+            <p className="fb-err">
+              Mạng hơi chập chờn nên chưa gửi được. Em bấm{" "}
+              {result.kind === "accept" ? "\"Gửi lại vé\"" : "lại nút bên dưới"} giúp anh nhé, lựa chọn của em vẫn còn nguyên.
+            </p>
           </div>
         )}
 
         <button
           type="button"
           className="btn later"
-          onClick={() => setResult({ text: laterMessage(FROM), done: "Không sao đâu em, cứ nghỉ ngơi đã nhé. Anh đợi được 😊" })}
+          disabled={Boolean(sending)}
+          onClick={() => submit("later")}
         >
           Dạo này em bận, để hôm khác nhé
         </button>
@@ -345,5 +365,7 @@ export default function Invite() {
         </button>
       </div>
     </main>
+    <Feedback activity={what} pickedSlot={pick ? `${formatDay(pick.date)} · ${formatTime(pick.time)}` : ""} />
+    </>
   );
 }

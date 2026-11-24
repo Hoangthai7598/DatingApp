@@ -1,25 +1,36 @@
 /* ====== CHỈNH Ở ĐÂY ====== */
 
-/** Số Zalo của anh, ví dụ "0912345678". Để trống thì trang chỉ có nút sao chép tin nhắn. */
-export const ZALO = process.env.NEXT_PUBLIC_ZALO ?? "";
+/** Thời gian đi từ nhà anh đến chỗ em (và từ chỗ em về nhà anh), phút. */
+export const TRAVEL_MINUTES = 30;
 
-/** Tên anh, dùng trong tin nhắn em gửi lại. */
-export const FROM = "Thái";
+export interface DayAvailability {
+  /** Anh rảnh từ lúc này (ở nhà). Giờ đón sớm nhất = free + TRAVEL_MINUTES. */
+  free: string;
+  /** Đưa em về nhà trước lúc này (để em nghỉ, em làm ca). */
+  dropOffBy: string;
+  /** Anh phải có mặt ở nhà trước lúc này (vd họp). Đưa em về trước homeBy - TRAVEL_MINUTES. */
+  homeBy?: string;
+  /** Giờ đón muộn nhất, bất kể hoạt động. */
+  latestPickup?: string;
+}
 
 /**
- * Khung thời gian anh rảnh theo thứ: 0 = Chủ nhật … 6 = Thứ 7.
- * [từ lúc nào anh đón được, buổi hẹn phải xong trước lúc nào]; null = không hiện ngày đó.
- * - Thứ 2, 3, 5: anh bận từ 22h.
- * - Các ngày khác: xong trước 23h để em về nghỉ (em làm ca).
+ * Lịch rảnh theo thứ: 0 = Chủ nhật … 6 = Thứ 7; null = không hiện ngày đó.
+ * - Thứ 2, 3, 5: anh họp lúc 22h ở nhà, đón muộn nhất 19:00.
+ * - Các ngày khác: đưa em về trước 23h.
  */
-export const AVAILABILITY: Record<number, [string, string] | null> = {
-  0: ["12:00", "23:00"],
-  1: ["18:00", "22:00"],
-  2: ["18:00", "22:00"],
-  3: ["18:00", "23:00"],
-  4: ["18:00", "22:00"],
-  5: ["18:00", "23:00"],
-  6: ["12:00", "23:00"],
+const MEETING_NIGHT: DayAvailability = { free: "18:00", dropOffBy: "23:00", homeBy: "22:00", latestPickup: "19:00" };
+const FREE_EVENING: DayAvailability = { free: "18:00", dropOffBy: "23:00" };
+const WEEKEND: DayAvailability = { free: "12:00", dropOffBy: "23:00" };
+
+export const AVAILABILITY: Record<number, DayAvailability | null> = {
+  0: WEEKEND,
+  1: MEETING_NIGHT,
+  2: MEETING_NIGHT,
+  3: FREE_EVENING,
+  4: MEETING_NIGHT,
+  5: FREE_EVENING,
+  6: WEEKEND,
 };
 
 /** Khoảng cách giữa các giờ đón, tính bằng phút. */
@@ -54,7 +65,7 @@ export const ACTIVITIES: Activity[] = [
     title: "Xem phim",
     sub: "Phim nào hay em chọn",
     duration: 180,
-    note: "Xem phim mất khoảng 3 tiếng cả đi lại, nên tối thứ 2, 3, 5 anh đón muộn nhất 19:00.",
+    note: "Xem phim mất khoảng 3 tiếng cả đi lại, nên tối thứ 2, 3, 5 anh chỉ đón được lúc 18:30.",
   },
   { id: "cafe", title: "Cafe chill", sub: "Ngồi nói chuyện, xả stress", duration: 90 },
   {
@@ -95,7 +106,7 @@ export const ACTIVITIES: Activity[] = [
     sub: "Mùa đông trong nhà",
     duration: 150,
     pickupWindows: [["09:00", "20:00"]],
-    note: "Sân băng mở đến 22h, mỗi phiên 1,5 tiếng, nên anh đón muộn nhất 20:00 (tối thứ 2, 3, 5 thì 19:30).",
+    note: "Sân băng mở đến 22h, mỗi phiên 1,5 tiếng, nên anh đón muộn nhất 20:00 (tối thứ 2, 3, 5 thì 19:00).",
   },
   { id: "khac", title: "Em chọn chỗ khác", sub: "Tuỳ em hết", duration: 120 },
 ];
