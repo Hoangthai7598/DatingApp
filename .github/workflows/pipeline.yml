@@ -30,22 +30,12 @@ jobs:
       - run: npm test
       - run: npm run build
 
-  deploy:
-    name: Deploy to GitHub Pages
+  build-pages:
+    name: Build for GitHub Pages
     needs: ci
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    concurrency:
-      group: pages
-      cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -58,12 +48,30 @@ jobs:
       - name: Build static site
         run: npm run build
         env:
-          # /<tên-repo> cho project site, rỗng nếu repo là <user>.github.io
+          # /<repo-name> for a project site, empty for <user>.github.io or a custom domain
           PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           # Settings → Secrets and variables → Actions → Variables → ZALO
           NEXT_PUBLIC_ZALO: ${{ vars.ZALO }}
       - uses: actions/upload-pages-artifact@v5
         with:
           path: out
+
+  # Deploy runs in its own job: deploy-pages in the same job as the upload can
+  # query the artifact before GitHub lists it and fail with "No artifacts named github-pages".
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build-pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v5
