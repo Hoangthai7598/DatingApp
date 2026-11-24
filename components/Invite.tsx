@@ -18,6 +18,8 @@ export default function Invite() {
   const [copyLabel, setCopyLabel] = useState("Sao chép tin nhắn");
   const otherRef = useRef<HTMLInputElement>(null);
   const outRef = useRef<HTMLDivElement>(null);
+  const stubRef = useRef<HTMLElement>(null);
+  const [stubVisible, setStubVisible] = useState(false);
   const msgRef = useRef<HTMLPreElement>(null);
 
   // Ngày tính theo giờ máy của người xem, nên chỉ tính sau khi trang chạy trên trình duyệt.
@@ -27,6 +29,15 @@ export default function Invite() {
   useEffect(() => {
     if (activity === "khac") otherRef.current?.focus();
   }, [activity]);
+
+  // Thanh "Chốt vé" dính đáy màn hình điện thoại, ẩn khi phần cuống vé đã hiện ra.
+  useEffect(() => {
+    const el = stubRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setStubVisible(e.isIntersecting), { threshold: 0.15 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     if (result) outRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -40,6 +51,12 @@ export default function Invite() {
   const zalo = useMemo(() => zaloLink(ZALO), []);
 
   const touch = () => setResult(null);
+
+  const confirm = () =>
+    setResult({
+      text: acceptMessage(FROM, { activity: what, day: when, time: time ?? "", note }),
+      done: "Em dán tin nhắn này gửi anh qua Zalo là xong nhé 😊",
+    });
 
   const copy = async () => {
     if (!result) return;
@@ -98,6 +115,7 @@ export default function Invite() {
 
       <section className="sec perf">
         <h2><span>2</span>Hôm nào em được nghỉ?</h2>
+        <div className="days-wrap">
         <div className="days" aria-label="Chọn ngày">
           {days.map((d, i) => (
             <button
@@ -113,6 +131,8 @@ export default function Invite() {
             </button>
           ))}
         </div>
+        </div>
+        {!day && <p className="swipe">Vuốt ngang để xem thêm ngày →</p>}
         <p className="hint">{day ? "Giờ anh qua đón em:" : "Chọn ngày trước rồi chọn giờ anh qua đón nhé."}</p>
         {slots.length > 0 && (
           <div className="times">
@@ -135,7 +155,7 @@ export default function Invite() {
         />
       </section>
 
-      <section className="sec perf stub">
+      <section className="sec perf stub" ref={stubRef} id="ve">
         <dl>
           {summary.map(([k, v]) => (
             <div key={k} className="kv">
@@ -148,12 +168,7 @@ export default function Invite() {
           type="button"
           className="btn go"
           disabled={!ready}
-          onClick={() =>
-            setResult({
-              text: acceptMessage(FROM, { activity: what, day: when, time: time ?? "", note }),
-              done: "Em dán tin nhắn này gửi anh qua Zalo là xong nhé 😊",
-            })
-          }
+          onClick={confirm}
         >
           Chốt vé này
         </button>
@@ -179,6 +194,13 @@ export default function Invite() {
           Dạo này em bận, để hôm khác nhé
         </button>
       </section>
+
+      <div className={`dock${ready && !result && !stubVisible ? " on" : ""}`} aria-hidden={!ready || !!result || stubVisible}>
+        <small>{what} · {when} · {time}</small>
+        <button type="button" className="btn go" tabIndex={ready && !result && !stubVisible ? 0 : -1} onClick={confirm}>
+          Chốt vé này
+        </button>
+      </div>
     </main>
   );
 }
