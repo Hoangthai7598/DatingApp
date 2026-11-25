@@ -333,17 +333,23 @@ export default function Invite() {
                   {movies.map((m) => (
                     <li key={m.sku}>
                       <button type="button" className="movie" aria-pressed={movieSku === m.sku} onClick={() => chooseMovie(m.sku)}>
-                        <b>{m.name}</b>
-                        <small>
-                          {[m.rating, m.duration ? `${m.duration} phút` : null].filter(Boolean).join(" · ") || "Đang chiếu"}
-                        </small>
+                        <Poster src={m.poster} />
+                        <span className="movie-text">
+                          <b>{m.name}</b>
+                          <small>
+                            {[m.rating, m.duration ? `${m.duration} phút` : null].filter(Boolean).join(" · ") || "Đang chiếu"}
+                          </small>
+                        </span>
                       </button>
                     </li>
                   ))}
                   <li>
                     <button type="button" className="movie any" aria-pressed={movieSku === ANY_MOVIE} onClick={() => chooseMovie(ANY_MOVIE)}>
-                      <b>Phim nào cũng được</b>
-                      <small>Em chọn giờ đón, anh chọn phim</small>
+                      <span className="poster empty" aria-hidden="true">🍿</span>
+                      <span className="movie-text">
+                        <b>Phim nào cũng được</b>
+                        <small>Em chọn giờ đón, anh chọn phim</small>
+                      </span>
                     </button>
                   </li>
                 </ul>
@@ -596,5 +602,21 @@ export default function Invite() {
     )}
     <Feedback activity={movieName ? `${what} · ${movieName}` : what} pickedSlot={slotLabel} />
     </>
+  );
+}
+
+/** Ảnh bìa phim (link ảnh của rạp). Không có ảnh hoặc ảnh lỗi thì hiện ô 🎬. */
+function Poster({ src }: { src?: string }) {
+  const [failed, setFailed] = useState<string | null>(null);
+  if (!src || failed === src) {
+    return (
+      <span className="poster empty" aria-hidden="true">
+        🎬
+      </span>
+    );
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- static export: ảnh ngoài, không qua next/image
+    <img className="poster" src={src} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setFailed(src)} />
   );
 }

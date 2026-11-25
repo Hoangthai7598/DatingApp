@@ -25,6 +25,8 @@ export interface ShowMovie {
   rating?: string;
   /** Runtime in minutes, if CGV reports a plausible value. */
   duration?: number;
+  /** Poster image URL (absolute https), if the chain sends one. */
+  poster?: string;
 }
 
 export interface Show {
@@ -82,6 +84,19 @@ export const isoDate = (d: Date) =>
 type Json = Record<string, unknown>;
 const arr = (v: unknown): Json[] => (Array.isArray(v) ? (v as Json[]) : []);
 const str = (v: unknown): string => (typeof v === "string" ? v : typeof v === "number" ? String(v) : "");
+
+/** First usable poster URL among candidates, made absolute against `origin`; undefined if none. */
+export function posterUrl(origin: string, ...candidates: unknown[]): string | undefined {
+  for (const c of candidates) {
+    const v = str(c).trim();
+    if (!v || /^(data|javascript):/i.test(v)) continue;
+    if (/^https?:\/\//i.test(v)) return v.replace(/^http:/i, "https:");
+    if (v.startsWith("//")) return `https:${v}`;
+    if (v.startsWith("/")) return `${origin}${v}`;
+    if (/\.(jpe?g|png|webp|gif)(\?.*)?$/i.test(v)) return `${origin}/${v}`;
+  }
+  return undefined;
+}
 
 /**
  * Movie id shared across chains, so the same film at CGV and Lotte appears once:
@@ -215,6 +230,7 @@ export function parseCinemaSchedule(
         name,
         rating: str(m.rating_code) || undefined,
         duration: runtimeOf(m.movie_endtime),
+        poster: posterUrl("https://www.cgv.vn", m.thumbnail, m.poster, m.image, m.small_image),
       });
       for (const lang of arr(m.languages)) {
         const format = str(lang.name).trim() || undefined;
@@ -249,6 +265,7 @@ export function parseLotteSchedule(resp: unknown, cinemaKey: string, date: strin
       name,
       rating: ratingOf(it.ViewGradeNameVN, it.ViewGradeName, it.ViewGradeNameKR, it.ViewGradeCode),
       duration: runtimeOf(it.PlayTime ?? it.RunningTime),
+      poster: posterUrl("https://www.lottecinemavn.com", it.PosterURL, it.PosterUrl, it.PosterImageURL, it.MoviePosterURL, it.ImageURL),
     });
     const format = [str(it.FilmNameVN || it.FilmName || it.FilmNameKR), str(it.TranslationDivisionNameVN || it.TranslationDivisionName || it.TranslationDivisionNameKR)]
       .map((x) => x.trim())
@@ -272,6 +289,7 @@ export function mergeShowtimes(parts: { movies: ShowMovie[]; shows: Show[] }[]):
         name: prev?.name ?? m.name,
         rating: prev?.rating ?? m.rating,
         duration: prev?.duration ?? m.duration,
+        poster: prev?.poster ?? m.poster,
       });
     }
     for (const s of p.shows) shows.set(`${s.date}|${s.time}|${s.cinema}|${s.sku}|${s.format ?? ""}`, s);

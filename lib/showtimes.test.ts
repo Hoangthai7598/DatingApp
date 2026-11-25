@@ -12,6 +12,7 @@ import {
   normalize,
   parseCinemaSchedule,
   parseClock,
+  posterUrl,
   showDates,
   showOptions,
   type ShowtimesData,
@@ -199,5 +200,36 @@ describe("showDates / bookableMovies", () => {
     const now = new Date(2026, 10, 25, 9, 0);
     expect(showDates(d, "26001", now, RULES)).toEqual(["2026-11-28"]);
     expect(bookableMovies(d, now, RULES).map((m) => m.name)).toEqual(["Bò Sữa Bay"]);
+  });
+});
+
+describe("posters", () => {
+  it("posterUrl makes URLs absolute https and skips junk", () => {
+    expect(posterUrl("https://www.cgv.vn", "", "http://cdn.x/a.jpg")).toBe("https://cdn.x/a.jpg");
+    expect(posterUrl("https://www.cgv.vn", "//cdn.x/a.jpg")).toBe("https://cdn.x/a.jpg");
+    expect(posterUrl("https://www.cgv.vn", "/media/a.jpg")).toBe("https://www.cgv.vn/media/a.jpg");
+    expect(posterUrl("https://www.cgv.vn", "media/a.png")).toBe("https://www.cgv.vn/media/a.png");
+    expect(posterUrl("https://www.cgv.vn", "javascript:alert(1)", "no-image", null)).toBeUndefined();
+  });
+  it("CGV thumbnail and Lotte PosterURL end up on the movie", () => {
+    const cgv = parseCinemaSchedule(
+      schedule([{ time: "19:30" }], { sku: "x", name: "Phim X", movie_endtime: 110, thumbnail: "https://www.cgv.vn/media/x.jpg" } as never),
+      "btl",
+      "2026-11-28",
+    );
+    expect(cgv.movies[0].poster).toBe("https://www.cgv.vn/media/x.jpg");
+    const lotte = parseLotteSchedule(
+      { Items: [{ MovieNameKR: "Phim Y", StartTime: "1930", PlayDt: "2026-11-28", PosterURL: "/Media/y.jpg" }] },
+      "kosmo",
+      "2026-11-28",
+    );
+    expect(lotte.movies[0].poster).toBe("https://www.lottecinemavn.com/Media/y.jpg");
+  });
+  it("merge keeps the first poster and fills a missing one", () => {
+    const m = mergeShowtimes([
+      { movies: [{ sku: "a", name: "A" }], shows: [] },
+      { movies: [{ sku: "a", name: "A", poster: "https://l/a.jpg" }], shows: [] },
+    ]);
+    expect(m.movies[0].poster).toBe("https://l/a.jpg");
   });
 });

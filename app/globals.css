@@ -56,11 +56,18 @@ h2 span {
 .movies h3 { font-size: 16px; margin: 0 0 8px; }
 .movies ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .movie {
-  width: 100%; display: grid; gap: 2px; text-align: left; padding: 10px 12px; min-height: 52px;
+  width: 100%; display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; text-align: left;
+  padding: 8px; min-height: 52px;
   border: 2px solid var(--line); border-radius: 12px; background: #fff; font: inherit; color: var(--ink); cursor: pointer;
 }
+.movie-text { display: grid; gap: 2px; min-width: 0; }
 .movie b { font-size: 15px; line-height: 1.3; }
 .movie small { font-size: 13px; color: var(--soft); }
+.poster {
+  display: block; width: 64px; aspect-ratio: 2 / 3; height: auto; object-fit: cover;
+  border-radius: 8px; background: #f6eef0;
+}
+.poster.empty { display: grid; place-items: center; font-size: 26px; }
 .movie[aria-pressed="true"] { border-color: var(--wine); background: #fde7ec; box-shadow: inset 0 0 0 1px var(--wine); }
 .movie.any { border-style: dashed; }
 .fetched { margin: 8px 0 0; font-size: 13px; color: var(--soft); }

@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Cloudflare wrangler local state
 .wrangler/
+
+# Raw responses from manual API probes
+.probe/
