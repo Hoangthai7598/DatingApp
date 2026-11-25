@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-25T02:05:30.520Z",
+  "fetchedAt": "2026-11-25T02:47:05.558Z",
   "source": "CGV",
   "error": "lotte: no showtimes",
   "cinemas": [
@@ -27,90 +27,88 @@
       "sku": "dune hanh tinh cat phan hai",
       "name": "DUNE: HÀNH TINH CÁT - PHẦN HAI (CHIẾU LẠI)",
       "rating": "T16",
-      "duration": 177
+      "duration": 177,
+      "poster": "https://static-cgv.vncdn.vn/media/catalog/product/cache/1/thumbnail/dc33889b0f8b5da88052ef70de32f1cb/4/7/470x700-dune12-rerun_1.jpg"
     },
     {
       "sku": "dau truong sinh tu binh minh ngay chieu quan",
       "name": "ĐẤU TRƯỜNG SINH TỬ: BÌNH MINH NGÀY CHIÊU QUÂN",
       "rating": "T16",
-      "duration": 158
+      "duration": 158,
+      "poster": "https://static-cgv.vncdn.vn/media/catalog/product/cache/1/thumbnail/dc33889b0f8b5da88052ef70de32f1cb/7/0/700wx1000h-hunger.jpg"
     },
     {
       "sku": "ebenezer phep mau dem giang sinh",
       "name": "EBENEZER PHÉP MÀU ĐÊM GIÁNG SINH",
       "rating": "T13",
-      "duration": 116
+      "duration": 116,
+      "poster": "https://static-cgv.vncdn.vn/media/catalog/product/cache/1/thumbnail/dc33889b0f8b5da88052ef70de32f1cb/4/7/470x700-ebenezer.jpg"
     },
     {
       "sku": "gap go thong gia dau moi trinh lang",
       "name": "GẶP GỠ THÔNG GIA: DÂU MỚI TRÌNH LÀNG",
       "rating": "T13",
-      "duration": 106
+      "duration": 106,
+      "poster": "https://static-cgv.vncdn.vn/media/catalog/product/cache/1/thumbnail/dc33889b0f8b5da88052ef70de32f1cb/4/7/470x700-fil.png"
     },
     {
       "sku": "godzilla tru khong",
       "name": "GODZILLA TRỪ KHÔNG",
       "rating": "T16",
-      "duration": 135
+      "duration": 135,
+      "poster": "https://static-cgv.vncdn.vn/media/catalog/product/cache/1/thumbnail/dc33889b0f8b5da88052ef70de32f1cb/i/m/imax_us_original_size.jpg"
     },
     {
       "sku": "hexe the gioi phep thuat",
       "name": "HEXE: THẾ GIỚI PHÉP THUẬT",
       "rating": "P",
-      "duration": 110
+      "duration": 110,
+      "poster": "https://static-cgv.vncdn.vn/media/catalog/product/cache/1/thumbnail/dc33889b0f8b5da88052ef70de32f1cb/h/e/hexed_007c_g_vie-vn_70x100_.jpg"
     },
     {
       "sku": "kien le phieu luu ke",
       "name": "KIẾN LÉ PHIÊU LƯU KÉ",
       "rating": "P",
-      "duration": 77
+      "duration": 77,
+      "poster": "https://static-cgv.vncdn.vn/media/catalog/product/cache/1/thumbnail/dc33889b0f8b5da88052ef70de32f1cb/2/_/2.1_kl-main_poster-700x1000.jpg"
     },
     {
       "sku": "ma mut con vuot ky bang ha",
       "name": "MA MÚT CON VƯỢT KỶ BĂNG HÀ",
       "rating": "P",
-      "duration": 73
+      "duration": 73,
+      "poster": "https://static-cgv.vncdn.vn/media/catalog/product/cache/1/thumbnail/dc33889b0f8b5da88052ef70de32f1cb/m/m/mmc_main_470x700.jpg"
     },
     {
       "sku": "ngay con con me",
       "name": "NGÀY CON CÒN MẸ",
       "rating": "T16",
-      "duration": 113
+      "duration": 113,
+      "poster": "https://static-cgv.vncdn.vn/media/catalog/product/cache/1/thumbnail/dc33889b0f8b5da88052ef70de32f1cb/4/7/470wx700h-nccm_2.jpg"
     },
     {
       "sku": "ramayana khoi nguon mot huyen thoai",
       "name": "RAMAYANA: KHỞI NGUỒN MỘT HUYỀN THOẠI",
       "rating": "T13",
-      "duration": 168
+      "duration": 168,
+      "poster": "https://static-cgv.vncdn.vn/media/catalog/product/cache/1/thumbnail/dc33889b0f8b5da88052ef70de32f1cb/3/5/350x495-ramayana.jpg"
     },
     {
       "sku": "running man viet nam 2026 ve nha",
       "name": "RUNNING MAN VIỆT NAM 2026 - VỀ NHÀ",
       "rating": "P",
-      "duration": 181
+      "duration": 181,
+      "poster": "https://static-cgv.vncdn.vn/media/catalog/product/cache/1/thumbnail/dc33889b0f8b5da88052ef70de32f1cb/r/m/rm26f_poster_700x1000_up_1.jpg"
     },
     {
       "sku": "trai giam hanh phuc",
       "name": "TRẠI GIAM HẠNH PHÚC",
       "rating": "T16",
-      "duration": 127
+      "duration": 127,
+      "poster": "https://static-cgv.vncdn.vn/media/catalog/product/cache/1/thumbnail/dc33889b0f8b5da88052ef70de32f1cb/3/5/350x495-tghp_1.jpg"
     }
   ],
   "shows": [
-    {
-      "date": "2026-11-25",
-      "time": "09:30",
-      "cinema": "iph",
-      "sku": "trai giam hanh phuc",
-      "format": "2D Phụ Đề Anh"
-    },
-    {
-      "date": "2026-11-25",
-      "time": "09:45",
-      "cinema": "iph",
-      "sku": "trai giam hanh phuc",
-      "format": "2D Phụ Đề Anh | Rạp GOLD CLASS"
-    },
     {
       "date": "2026-11-25",
       "time": "09:50",
