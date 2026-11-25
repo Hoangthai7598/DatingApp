@@ -56,6 +56,9 @@ export function availabilityOn(
   return key in overrides ? overrides[key] : (availability[date.getDay()] ?? null);
 }
 
+/** Nút "Dạo này em bận, để hôm khác nhé" dưới vé. Tạm ẩn vì popup rủ date lần 2 đã có nút Không. */
+export const SHOW_LATER_BUTTON = false;
+
 /** Khoảng cách giữa các giờ đón, tính bằng phút. */
 export const STEP_MINUTES = 30;
 

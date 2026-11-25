@@ -237,6 +237,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visib
 .sheet p { margin: 0 0 16px; color: var(--soft); min-height: 1.5em; }
 .sheet-actions { display: grid; gap: 8px; }
 .sheet-later { background: transparent; color: var(--soft); text-decoration: underline; }
+.sheet-backdrop.center { place-items: center; }
 @media (min-width: 601px) { .sheet-backdrop { place-items: center; } }
 @media (prefers-reduced-motion: no-preference) {
   .top .hello { animation: bob 2.6s ease-in-out infinite; transform-origin: 50% 100%; }

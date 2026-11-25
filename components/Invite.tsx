@@ -10,6 +10,7 @@ import {
   DEFAULT_DURATION,
   DEFAULT_MOVIE_MINUTES,
   LIVE_SHOWTIMES,
+  SHOW_LATER_BUTTON,
   SHOWTIMES_PROXY,
   SHOWTIME_DAYS,
   LEAD_MINUTES,
@@ -574,14 +575,16 @@ export default function Invite() {
           </div>
         )}
 
-        <button
-          type="button"
-          className="btn later"
-          disabled={Boolean(sending)}
-          onClick={() => setAskLater(true)}
-        >
-          Dạo này em bận, để hôm khác nhé
-        </button>
+        {SHOW_LATER_BUTTON && (
+          <button
+            type="button"
+            className="btn later"
+            disabled={Boolean(sending)}
+            onClick={() => setAskLater(true)}
+          >
+            Dạo này em bận, để hôm khác nhé
+          </button>
+        )}
       </section>
 
       <div className={`dock${dockOn ? " on" : ""}`} aria-hidden={!dockOn}>
