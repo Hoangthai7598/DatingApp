@@ -5,7 +5,7 @@
  * Data flow: GitHub Actions runs the fetch script every morning → public/showtimes.json →
  * the page loads it and only offers showtimes you can actually make.
  */
-import type { CinemaConfig, DayAvailability } from "./config";
+import { availabilityOn, type CinemaConfig, type DayAvailability } from "./config";
 
 /* ───────────────────────────── data file ───────────────────────────── */
 
@@ -331,7 +331,7 @@ export const parseIsoDate = (iso: string) => {
  * - for today, pick-up at least leadMinutes from now.
  */
 export function showOptions(data: ShowtimesData, sku: string, date: string, now: Date, rules: ShowRules): ShowOption[] {
-  const day = rules.availability[parseIsoDate(date).getDay()];
+  const day = availabilityOn(rules.availability, parseIsoDate(date));
   if (!day) return [];
   const movie = data.movies.find((m) => m.sku === sku);
   const runtime = movie?.duration ?? rules.defaultMovieMinutes;

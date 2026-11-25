@@ -1,4 +1,4 @@
-import { ACTIVITIES, type ActivityId, type DayAvailability } from "./config";
+import { ACTIVITIES, availabilityOn, type ActivityId, type DayAvailability } from "./config";
 
 export const DAY_SHORT = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
 export const DAY_FULL = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
@@ -54,7 +54,7 @@ export function slotsFor(
   leadMinutes: number,
   travelMinutes = 0,
 ): string[] {
-  const day = availability[date.getDay()];
+  const day = availabilityOn(availability, date);
   if (!day) return [];
   const earliest = toMin(day.free) + travelMinutes;
   const dropOff = Math.min(

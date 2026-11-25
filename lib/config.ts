@@ -16,7 +16,8 @@ export interface DayAvailability {
 
 /**
  * Lịch rảnh theo thứ: 0 = Chủ nhật … 6 = Thứ 7; null = không hiện ngày đó.
- * - Thứ 2, 3, 5: anh họp lúc 22h ở nhà, đón muộn nhất 19:00.
+ * - Thứ 2: anh dạy học 19:20 – 20:20 rồi 22h họp, nên nghỉ hẳn.
+ * - Thứ 3, 5: anh họp lúc 22h ở nhà, đón muộn nhất 19:00.
  * - Các ngày khác: đưa em về trước 23h.
  */
 const MEETING_NIGHT: DayAvailability = { free: "18:00", dropOffBy: "23:00", homeBy: "22:00", latestPickup: "19:00" };
@@ -25,13 +26,35 @@ const WEEKEND: DayAvailability = { free: "12:00", dropOffBy: "23:00" };
 
 export const AVAILABILITY: Record<number, DayAvailability | null> = {
   0: WEEKEND,
-  1: MEETING_NIGHT,
+  1: null,
   2: MEETING_NIGHT,
   3: FREE_EVENING,
   4: MEETING_NIGHT,
   5: FREE_EVENING,
   6: WEEKEND,
 };
+
+/**
+ * Ngoại lệ cho từng ngày cụ thể (theo giờ Việt Nam, "YYYY-MM-DD"), đè lên lịch theo thứ ở trên.
+ * Đặt null để khoá cả ngày. Ngày đã qua thì để đó cũng không sao.
+ */
+export const DATE_OVERRIDES: Record<string, DayAvailability | null> = {
+  // Thứ 5 tuần này tối không họp: rảnh như thứ 4, thứ 6.
+  "2026-11-26": FREE_EVENING,
+};
+
+const isoDay = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+/** Lịch rảnh của một ngày: ưu tiên DATE_OVERRIDES, không có thì theo thứ. */
+export function availabilityOn(
+  availability: Record<number, DayAvailability | null>,
+  date: Date,
+  overrides: Record<string, DayAvailability | null> = DATE_OVERRIDES,
+): DayAvailability | null {
+  const key = isoDay(date);
+  return key in overrides ? overrides[key] : (availability[date.getDay()] ?? null);
+}
 
 /** Khoảng cách giữa các giờ đón, tính bằng phút. */
 export const STEP_MINUTES = 30;
@@ -65,7 +88,7 @@ export const ACTIVITIES: Activity[] = [
     title: "Xem phim",
     sub: "Phim nào hay em chọn",
     duration: 180,
-    note: "Xem phim mất khoảng 3 tiếng cả đi lại, nên tối thứ 2, 3, 5 anh chỉ đón được lúc 18:30.",
+    note: "Xem phim mất khoảng 3 tiếng cả đi lại, nên tối thứ 3, 5 anh chỉ đón được lúc 18:30.",
   },
   { id: "cafe", title: "Cafe chill", sub: "Ngồi nói chuyện, xả stress", duration: 90 },
   {
@@ -106,7 +129,7 @@ export const ACTIVITIES: Activity[] = [
     sub: "Mùa đông trong nhà",
     duration: 150,
     pickupWindows: [["09:00", "20:00"]],
-    note: "Sân băng mở đến 22h, mỗi phiên 1,5 tiếng, nên anh đón muộn nhất 20:00 (tối thứ 2, 3, 5 thì 19:00).",
+    note: "Sân băng mở đến 22h, mỗi phiên 1,5 tiếng, nên anh đón muộn nhất 20:00 (tối thứ 3, 5 thì 19:00).",
   },
   { id: "khac", title: "Em chọn chỗ khác", sub: "Tuỳ em hết", duration: 120 },
 ];

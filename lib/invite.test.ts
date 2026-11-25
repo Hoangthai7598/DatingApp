@@ -19,6 +19,7 @@ const CAFE = rule("cafe");
 const cal = (now: Date, r = CAFE, w = AVAILABILITY, min = 14) => calendarDays(now, w, r, min, 30, 60, 30);
 const slots = (d: Date, id: ActivityId, now = WED_25_NOV) => slotsFor(d, AVAILABILITY, rule(id), 30, now, 60, 30);
 const MON = new Date(2026, 10, 30);
+const TUE = new Date(2026, 11, 1);
 const SAT = new Date(2026, 10, 28);
 
 describe("timeSlots", () => {
@@ -30,14 +31,14 @@ describe("timeSlots", () => {
 
 describe("slotsFor: đường đi, tối họp và điều kiện theo hoạt động", () => {
   it("đón sớm nhất = lúc anh rảnh + 30 phút đi sang", () => {
-    expect(slots(MON, "cafe")[0]).toBe("18:30");
+    expect(slots(TUE, "cafe")[0]).toBe("18:30");
     expect(slots(SAT, "cafe")[0]).toBe("12:30");
   });
-  it("tối họp (thứ 2, 3, 5): đón muộn nhất 19:00", () => expect(slots(MON, "cafe")).toEqual(["18:30", "19:00"]));
+  it("tối họp (thứ 3, 5): đón muộn nhất 19:00", () => expect(slots(TUE, "cafe")).toEqual(["18:30", "19:00"]));
   it("tối họp + xem phim 3 tiếng: phải về nhà trước 22h nên chỉ đón 18:30", () =>
-    expect(slots(MON, "phim")).toEqual(["18:30"]));
-  it("tối họp + trượt băng: 18:30 – 19:00", () => expect(slots(MON, "bang")).toEqual(["18:30", "19:00"]));
-  it("bắn cung: không có buổi tối trong tuần", () => expect(slots(MON, "cung")).toEqual([]));
+    expect(slots(TUE, "phim")).toEqual(["18:30"]));
+  it("tối họp + trượt băng: 18:30 – 19:00", () => expect(slots(TUE, "bang")).toEqual(["18:30", "19:00"]));
+  it("bắn cung: không có buổi tối trong tuần", () => expect(slots(TUE, "cung")).toEqual([]));
   it("bắn cung cuối tuần: 12:30 – 16:30", () => {
     const s = slots(SAT, "cung");
     expect(s[0]).toBe("12:30");
@@ -58,7 +59,7 @@ describe("slotsFor: đường đi, tối họp và điều kiện theo hoạt đ
     expect(slots(now, "cafe", now)).toEqual(["20:00", "20:30", "21:00", "21:30"]);
   });
   it("không tính đường đi khi travelMinutes = 0", () =>
-    expect(slotsFor(MON, AVAILABILITY, CAFE, 30, WED_25_NOV, 60)[0]).toBe("18:00"));
+    expect(slotsFor(TUE, AVAILABILITY, CAFE, 30, WED_25_NOV, 60)[0]).toBe("18:00"));
 });
 
 describe("calendarDays", () => {
@@ -66,7 +67,7 @@ describe("calendarDays", () => {
     const days = cal(WED_25_NOV);
     expect(formatDay(days[0])).toBe("Thứ 4, 25/11");
     expect(dayKey(days[days.length - 1])).toBe("2026-12-31");
-    expect(days).toHaveLength(37);
+    expect(days).toHaveLength(32); // 37 ngày trừ 5 thứ 2
   });
   it("bắn cung chỉ còn thứ 7 và chủ nhật", () => {
     const days = cal(WED_25_NOV, rule("cung"));
@@ -77,9 +78,9 @@ describe("calendarDays", () => {
     expect(formatDay(cal(new Date(2026, 10, 25, 21, 0))[0])).toBe("Thứ 5, 26/11");
   });
   it("cuối năm thì kéo dài sang năm sau cho đủ số ngày tối thiểu", () => {
-    const days = cal(new Date(2026, 11, 28, 9, 0));
-    expect(dayKey(days[0])).toBe("2026-12-28");
-    expect(dayKey(days[days.length - 1])).toBe("2027-01-11");
+    const days = cal(new Date(2026, 11, 28, 9, 0)); // thứ 2 nghỉ nên bắt đầu từ thứ 3
+    expect(dayKey(days[0])).toBe("2026-12-29");
+    expect(dayKey(days[days.length - 1])).toBe("2027-01-10"); // 11/1 là thứ 2
   });
   it("bỏ qua ngày anh không rảnh", () => {
     expect(cal(WED_25_NOV, CAFE, { ...AVAILABILITY, 1: null }).some((d) => d.getDay() === 1)).toBe(false);
@@ -113,4 +114,21 @@ describe("activityLabel", () => {
   it("dùng chữ em tự ghi khi chọn chỗ khác", () => expect(activityLabel("khac", " Hồ Tây ")).toBe("Hồ Tây"));
   it("có chữ mặc định khi em chưa ghi", () => expect(activityLabel("khac", "")).toBe("Em chọn chỗ khác"));
   it("rỗng khi chưa chọn", () => expect(activityLabel(null, "")).toBe(""));
+});
+
+describe("date overrides", () => {
+  it("Thu 26 Nov 2026 has no meeting: pick-ups go past 19:00", () => {
+    const thu = new Date(2026, 10, 26);
+    const s = slotsFor(thu, AVAILABILITY, rule("cafe"), 30, WED_25_NOV, 60, 30);
+    expect(s.at(-1)! > "19:00").toBe(true);
+  });
+  it("other Thursdays keep the 19:00 limit", () => {
+    const thu = new Date(2026, 11, 3);
+    expect(slotsFor(thu, AVAILABILITY, rule("cafe"), 30, WED_25_NOV, 60, 30).at(-1)).toBe("19:00");
+  });
+});
+
+describe("Monday", () => {
+  it("teaching + meeting: no slots at all", () => expect(slots(MON, "cafe")).toEqual([]));
+  it("never shows in the calendar", () => expect(cal(WED_25_NOV).some((d) => d.getDay() === 1)).toBe(false));
 });

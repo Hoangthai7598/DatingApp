@@ -156,16 +156,16 @@ describe("Lotte", () => {
 });
 
 describe("showOptions: chỉ suất anh đi được", () => {
-  it("tối họp (thứ 2): đón 18:30–19:00, em về trước 21:30", () => {
-    const d = data([btl("2026-11-30", "18:30"), btl("2026-11-30", "19:00"), btl("2026-11-30", "19:30"), xd("2026-11-30", "19:00")]);
+  it("tối họp (thứ 3): đón 18:30–19:00, em về trước 21:30", () => {
+    const d = data([btl("2026-12-01", "18:30"), btl("2026-12-01", "19:00"), btl("2026-12-01", "19:30"), xd("2026-12-01", "19:00")]);
     // BTL cách em 10', đến sớm 15' → 19:00 đón 18:35; 18:30 đón 18:05 (sớm quá); 19:30 đón 19:05 (muộn quá)
     // XD cách em 20' → 19:00 đón 18:25 (sớm quá)
-    expect(times(d, "2026-11-30")).toEqual(["19:00@btl→18:35"]);
+    expect(times(d, "2026-12-01")).toEqual(["19:00@btl→18:35"]);
   });
   it("tối họp: phim dài làm về muộn thì bỏ", () => {
-    const long = data([btl("2026-11-30", "19:00")], [{ sku: "26001", name: "Phim dài", duration: 150 }]);
+    const long = data([btl("2026-12-01", "19:00")], [{ sku: "26001", name: "Phim dài", duration: 150 }]);
     // 19:00 + 15' quảng cáo + 150' + 10' về = 21:55 > 21:30
-    expect(times(long, "2026-11-30")).toEqual([]);
+    expect(times(long, "2026-12-01")).toEqual([]);
   });
   it("cuối tuần: em phải về trước 23h", () => {
     const d = data([btl("2026-11-28", "20:30"), btl("2026-11-28", "21:00"), btl("2026-11-28", "12:30")]);
@@ -178,9 +178,9 @@ describe("showOptions: chỉ suất anh đi được", () => {
     expect(times(d, "2026-11-25", now)).toEqual(["20:30@btl→20:05"]);
   });
   it("không biết thời lượng thì dùng mặc định 120'", () => {
-    const d = data([btl("2026-11-30", "19:00")], [{ sku: "26001", name: "Phim" }]);
+    const d = data([btl("2026-12-01", "19:00")], [{ sku: "26001", name: "Phim" }]);
     // 19:00 + 15 + 120 + 10 = 21:25 ≤ 21:30
-    expect(showOptions(d, "26001", "2026-11-30", new Date(2026, 10, 25), RULES)[0].dropOff).toBe("21:25");
+    expect(showOptions(d, "26001", "2026-12-01", new Date(2026, 10, 25), RULES)[0].dropOff).toBe("21:25");
   });
   it("rạp không có trong cấu hình thì bỏ qua", () => {
     expect(times(data([{ date: "2026-11-28", time: "19:00", cinema: "zzz", sku: "26001" }]), "2026-11-28")).toEqual([]);
