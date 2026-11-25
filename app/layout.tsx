@@ -6,8 +6,9 @@ import "@fontsource/be-vietnam-pro/800.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Đi chơi không em?",
-  description: "Một lời mời nho nhỏ",
+  // Neutral on purpose: the tab and the link preview (Zalo, Messenger…) shouldn't give the surprise away.
+  title: "Gửi em",
+  description: "Em mở ra xem nhé 💌",
   robots: { index: false, follow: false },
 };
 
