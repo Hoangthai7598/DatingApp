@@ -19,7 +19,7 @@ describe("storeEnabled", () => {
 describe("toFeedbackRow", () => {
   it("cắt khoảng trắng, giới hạn độ dài, bỏ trường rỗng", () => {
     const row = toFeedbackRow({ message: "  hi  ", activity: " ", picked_slot: "x".repeat(200) });
-    expect(row).toEqual({ message: "hi", activity: null, picked_slot: "x".repeat(80), user_agent: null });
+    expect(row).toEqual({ message: "hi", activity: null, picked_slot: "x".repeat(80), user_agent: null, sender: null });
     expect(toFeedbackRow({ message: "a".repeat(2000) }).message).toHaveLength(1000);
   });
 });
@@ -122,5 +122,28 @@ describe("tự gửi lại khi lỗi tạm thời", () => {
     const f = vi.fn(async () => new Response(null, { status: 500 }));
     await expect(sendBooking({ kind: "later" }, opts(f, 3))).rejects.toThrow("500");
     expect(f).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe("sender (Ai gửi)", () => {
+  it("gửi kèm sender khi có", async () => {
+    const f = okFetch();
+    await sendFeedback({ message: "hi", sender: "📱 iPhone · Safari · trang thật · máy #77c2" }, opts(f));
+    expect(JSON.parse(callOf(f)[1].body as string).sender).toBe("📱 iPhone · Safari · trang thật · máy #77c2");
+  });
+  it("database chưa có cột sender: gửi lại không kèm sender, không mất vé", async () => {
+    const bodies: Record<string, unknown>[] = [];
+    const f = vi.fn(async (_u: string, init: RequestInit) => {
+      const body = JSON.parse(init.body as string);
+      bodies.push(body);
+      return new Response(null, { status: "sender" in body ? 400 : 201 });
+    }) as unknown as typeof fetch;
+    await sendBooking({ kind: "later", sender: "máy #1" }, opts(f));
+    expect(bodies).toHaveLength(2);
+    expect(bodies[1]).not.toHaveProperty("sender");
+  });
+  it("lỗi 4xx không liên quan sender thì vẫn báo lỗi", async () => {
+    const f = vi.fn(async () => new Response(null, { status: 400 })) as unknown as typeof fetch;
+    await expect(sendFeedback({ message: "hi" }, opts(f))).rejects.toThrow("400");
   });
 });

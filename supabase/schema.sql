@@ -23,6 +23,8 @@ create table if not exists public.bookings (
   movie       text check (movie is null or char_length(movie) <= 120),
   cinema      text check (cinema is null or char_length(cinema) <= 80),
   showtime    text check (showtime is null or showtime ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$'),
+  -- Who sent it: device · page (live or localhost) · browser id; tagged 🧪 TEST from your own machine.
+  sender      text check (sender is null or char_length(sender) <= 120),
   -- An accepted booking must say what, which day and what time.
   check (kind = 'later' or (activity is not null and day is not null and pickup_time is not null))
 );
@@ -34,7 +36,8 @@ create table if not exists public.feedback (
   message     text not null check (char_length(btrim(message)) between 1 and 1000),
   activity    text check (activity is null or char_length(activity) <= 80),
   picked_slot text check (picked_slot is null or char_length(picked_slot) <= 80),
-  user_agent  text check (user_agent is null or char_length(user_agent) <= 300)
+  user_agent  text check (user_agent is null or char_length(user_agent) <= 300),
+  sender      text check (sender is null or char_length(sender) <= 120)
 );
 
 -- ─────────────────────────────────────────────────────────────── insert-only access
@@ -49,8 +52,8 @@ create policy "anyone can send feedback" on public.feedback for insert to anon w
 
 -- No select/update/delete policies exist, so those are denied. Tighten grants too.
 revoke all on public.bookings, public.feedback from anon, authenticated;
-grant insert (kind, activity, day, pickup_time, slot_label, note, user_agent, movie, cinema, showtime) on public.bookings to anon;
-grant insert (message, activity, picked_slot, user_agent) on public.feedback to anon;
+grant insert (kind, activity, day, pickup_time, slot_label, note, user_agent, movie, cinema, showtime, sender) on public.bookings to anon;
+grant insert (message, activity, picked_slot, user_agent, sender) on public.feedback to anon;
 
 -- ─────────────────────────────────────────────────────────────── Telegram notification (optional)
 -- Sends you a Telegram message on every new booking / feedback.
@@ -70,6 +73,7 @@ declare
   bot_token text;
   chat_id   text;
   msg       text;
+  device    text;
 begin
   select decrypted_secret into bot_token from vault.decrypted_secrets where name = 'telegram_bot_token';
   select decrypted_secret into chat_id   from vault.decrypted_secrets where name = 'telegram_chat_id';
@@ -99,6 +103,21 @@ begin
     msg := '📝 Em góp ý:' || chr(10) || new.message
         || coalesce(chr(10) || '(đang chọn: ' || nullif(concat_ws(' · ', new.activity, new.picked_slot), '') || ')', '');
   end if;
+
+  -- Who sent it: the page fills `sender`; older cached pages only send user_agent, so guess the device from it.
+  device := case
+    when new.user_agent ilike '%zalo%'                                    then 'app Zalo'
+    when new.user_agent ilike '%FBAN%' or new.user_agent ilike '%FBAV%'   then 'Messenger/Facebook'
+    when new.user_agent ilike '%iphone%'                                  then '📱 iPhone'
+    when new.user_agent ilike '%ipad%'                                    then '📱 iPad'
+    when new.user_agent ilike '%android%'                                 then '📱 Android'
+    when new.user_agent ilike '%macintosh%'                               then '💻 Mac'
+    when new.user_agent ilike '%windows%'                                 then '💻 Windows'
+    else 'không rõ thiết bị'
+  end;
+  msg := msg || chr(10) || '———' || chr(10)
+      || '👤 Từ: ' || coalesce(new.sender, device || ' (trang bản cũ)')
+      || chr(10) || '🕐 ' || to_char(new.created_at at time zone 'Asia/Ho_Chi_Minh', 'HH24:MI:SS DD/MM');
 
   perform net.http_post(
     url     := 'https://api.telegram.org/bot' || bot_token || '/sendMessage',
